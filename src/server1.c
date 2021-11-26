@@ -145,26 +145,28 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     printf("File opened.\n");
     // Send file
     
-    int i =0;
+    int i = 5;
+    int packet_number = 0;
     int flag_eof = 0;
     do{
-        i=0;
+        i=5;
         memset(buffer, 0, sizeof(buffer));
+        fprintf(buffer, "%06d", packet_number);
         do{
-            
             buffer[i] = fgetc(file);
             printf("%c\n", buffer[i]);
             if(buffer[i-1] == EOF ){
                 flag_eof = 1;
             }
             i++;
-        }while(flag_eof == 0|| i-1 < SEGMENT_SIZE);
+        }while(flag_eof == 0 && i-1 < SEGMENT_SIZE);
         printf("Sending segment %s\n", buffer);
         
         if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                 printf("sendto failed.\n");
                 return -1;
         }
+        packet_number++;
     }while(flag_eof == 0);
 
 
