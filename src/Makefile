@@ -1,5 +1,5 @@
 group = DetecteurML
-all : server1 utils
+all : server1
 
 server1 : server1.o utils.o
 	gcc utils.o server1.o -o ../bin/server1-$(group) 
