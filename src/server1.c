@@ -149,10 +149,10 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     int packet_number = 0;
     int flag_eof = 0;
     do{
-        i=5;
+        i=6;
         memset(buffer, 0, sizeof(buffer));
         sprintf(buffer, "%06d", packet_number);
-        printf("New buffer, segment n°%s", buffer);
+        printf("New buffer, segment n°%c %c %c %c %c %c", buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
         do{
             buffer[i] = fgetc(file);
            // printf("%c\n", buffer[i]);
