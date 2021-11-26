@@ -160,34 +160,45 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     do{
         char buffer[DEFAULT_SEGMENT_SIZE];
         char segmented_file[segment_size];
-        packet_number = acked +1;
-        memset(buffer, 0, sizeof(buffer));
-        memset(segmented_file, 0, sizeof(segmented_file));
-        // Add the segment number to the header
-        sprintf(buffer, "%06d", packet_number);
-        // Read the file
-        fseek(file, segment_size*packet_number, SEEK_SET);
-        if(fread(segmented_file, sizeof(char), segment_size-7, file) < segment_size-7){
-            flag_eof = 1;
+
+        
+            packet_number = acked +1;
+        // Windows congestion. If the window is full, wait for the client to send an ACK.
+        for (int i = 0; i < window_size; i++)
+        {
+            packet_number = packet_number + i;
+            memset(buffer, 0, sizeof(buffer));
+            memset(segmented_file, 0, sizeof(segmented_file));
+            // Add the segment number to the header
+            sprintf(buffer, "%06d", packet_number);
+            // Read the file
+            fseek(file, segment_size*packet_number, SEEK_SET);
+            if(fread(segmented_file, sizeof(char), segment_size-7, file) < segment_size-7){
+                flag_eof = 1;
+            }
+
+            strcat(buffer, segmented_file);
+            //printf("Sending segment %06d\n", packet_number);
+            
+            if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
+                    printf("sendto failed.\n");
+                    handle_error("sendto failed");
+                    return -1;
+            }
         }
 
-        strcat(buffer, segmented_file);
-        //printf("Sending segment %06d\n", packet_number);
-        
-        if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
-                printf("sendto failed.\n");
-                handle_error("sendto failed");
-                return -1;
-        }
         //wait for ACK messages
         char ack_buffer[16];
         memset(ack_buffer, 0, sizeof(ack_buffer));
         if(recvfrom(sockfd, ack_buffer, sizeof(ack_buffer), 0, (struct sockaddr *)client_addr, &client_addr_len) < 0){
             printf("TIMEOUT on packet %d!\n", packet_number);
+            window_size = DEFAULT_WINDOW_SIZE;
+            printf("Resetting window size to %d\n", window_size);
         }
         else{
             if (compareString(ack_buffer, "ACK[0-9]{6}")){
                 acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
+                window_size = window_size*2;
             }
         }
     }while(flag_eof == 0 && acked <= packet_number);
