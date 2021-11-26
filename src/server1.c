@@ -144,6 +144,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     FILE *file;
     char buffer[SEGMENT_SIZE];
     char segmented_file[SEGMENT_SIZE-6];
+    char header[6];
     file_name[strcspn(file_name, "\n")] = 0;
     // Open file
     file = get_file(file_name);
@@ -158,8 +159,10 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     do{
         packet_number = acked +1;
         memset(buffer, 0, sizeof(buffer));
+        memset(header, 0, sizeof(header));
         memset(segmented_file, 0, sizeof(segmented_file));
-        
+        // Add the segment number to the header
+        sprintf(buffer, "%06d", packet_number);
         /*
         do{
             
@@ -171,10 +174,13 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             i++;
         }while(flag_eof == 0 && i < SEGMENT_SIZE);
         */
+
+        // Read the file
         if(fread(segmented_file, sizeof(char), SEGMENT_SIZE-6, file) < SEGMENT_SIZE-6){
             flag_eof = 1;
         }
-        sprintf(buffer, "%06d%s", packet_number, segmented_file);
+
+        strcat(buffer, segmented_file);
         printf("Sending segment %06d\n", packet_number);
         
         if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
