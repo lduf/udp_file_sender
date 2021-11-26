@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include "includes/utils.h"
 #include "includes/server1.h"
+#include <sys/time.h>
 
 #define handle_error(msg) \
     do { perror(msg); exit(EXIT_FAILURE); } while (0)
@@ -215,6 +216,19 @@ int end_connection(int sockfd, struct sockaddr_in *client_addr, socklen_t client
     return 0;
 }
 
+/**
+ * @brief This function returns the size of the file.
+ * 
+ * @param file The file.
+ * 
+ * @return The size of the file.
+ */
+int get_file_size(FILE *file){
+    fseek(file, 0L, SEEK_END);
+    int size = ftell(file);
+    fseek(file, 0L, SEEK_SET);
+    return size;
+}
 
 /**
  * @brief This is the main function. It will create a UDP server to the given port and wait for the client to send a SYN packet. 
@@ -260,7 +274,20 @@ int main(int argc, char *argv[]) {
         handle_error("recvfrom failed");
 
     printf("Received file name : %s\n", buffer);
+
+    //calculate the execution time
+    struct timeval start, end;
+    gettimeofday(&start, NULL);
     send_file(new_sockfd, &client_addr, client_addr_len, buffer);
+    gettimeofday(&end, NULL);
+    double time_taken = (end.tv_sec - start.tv_sec) * 1e6;
+    
+    //calculate the throughput
+    int file_size = get_file_size(get_file(buffer));
+    double throughput = file_size / time_taken;
+    printf("Time taken: %f\n", time_taken);
+    printf("Throughput: %f Byte/s\n", throughput);
+
 
     return 0;
 }
