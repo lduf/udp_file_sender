@@ -138,9 +138,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     
     file_name[strcspn(file_name, "\n")] = 0;
     // Open file
-    file = get_file("./toto");
+    file = get_file("toto");
     if(file == NULL){
-        printf("File not found.\n");
         return -1;
     }
     printf("File opened.\n");
