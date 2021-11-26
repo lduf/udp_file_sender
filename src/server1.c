@@ -145,7 +145,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     printf("File opened.\n");
     // Send file
     
-    int i = 5;
+    int i = 6;
     int packet_number = 0;
     int flag_eof = 0;
     do{
@@ -167,6 +167,19 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 printf("sendto failed.\n");
                 return -1;
         }
+        //wait for ACK messages
+        char ack_buffer[16];
+        memset(ack_buffer, 0, sizeof(ack_buffer));
+        if(recvfrom(sockfd, ack_buffer, sizeof(ack_buffer), 0, (struct sockaddr *)client_addr, &client_addr_len) < 0){
+            printf("recvfrom failed.\n");
+            return -1;
+        }
+        if(compareString(ack_buffer, "ACK[0-9]{6}")){
+            int acked = extract(ack_buffer, "ACK[(0-9]{6})", 1);
+            printf("ACK received for packet %d\n", acked);
+        }
+
+
         packet_number++;
     }while(flag_eof == 0);
 
