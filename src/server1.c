@@ -164,16 +164,17 @@ int main(int argc, char *argv[]) {
         handle_error("recvfrom failed");
 
     printf("Received : %s\n", buffer);
+    int new_sockfd = 0; 
     if(compareString(buffer, "SYN")){
         printf("Received SYN from client.\n");
-        sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
-        printf("New socket: %d\n", sockfd);
+        new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
+        printf("New socket: %d\n", new_sockfd);
     }
 
     // clear buffer
     memset(buffer, 0, BUFFER_LIMIT);
     // Send file given by the client
-    if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
+    if (recvfrom(new_sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
         handle_error("recvfrom failed");
 
     printf("Received file name : %s\n", buffer);
