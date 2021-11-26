@@ -22,7 +22,7 @@
 #define SEGMENT_SIZE 536
 #define DEFAULT_PORT 1234
 
-
+int segment_size = SEGMENT_SIZE;
 /**
  * @brief This function is used to create the UDP server, and bind it to the specified port.
  * @param port The port number to bind the server to.
@@ -142,9 +142,6 @@ FILE* get_file(char* path){
  */
 int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr_len, char *file_name) {
     FILE *file;
-    char buffer[SEGMENT_SIZE];
-    char segmented_file[SEGMENT_SIZE-6];
-    char header[6];
     file_name[strcspn(file_name, "\n")] = 0;
     // Open file
     file = get_file(file_name);
@@ -157,12 +154,14 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     int packet_number = 0;
     int flag_eof = 0;
     do{
+
+        char buffer[segment_size];
+        char segmented_file[segment_size-7];
         packet_number = acked +1;
         memset(buffer, 0, sizeof(buffer));
-        memset(header, 0, sizeof(header));
         memset(segmented_file, 0, sizeof(segmented_file));
         // Add the segment number to the header
-        sprintf(buffer, "%05d", packet_number);
+        sprintf(buffer, "%06d", packet_number);
         /*
         do{
             
@@ -172,11 +171,11 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 flag_eof = 1;
             }
             i++;
-        }while(flag_eof == 0 && i < SEGMENT_SIZE);
+        }while(flag_eof == 0 && i < segment_size);
         */
 
         // Read the file
-        if(fread(segmented_file, sizeof(char), SEGMENT_SIZE-6, file) < SEGMENT_SIZE-6){
+        if(fread(segmented_file, sizeof(char), segment_size-7, file) < segment_size-7){
             flag_eof = 1;
         }
 
@@ -192,11 +191,13 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         memset(ack_buffer, 0, sizeof(ack_buffer));
         if(recvfrom(sockfd, ack_buffer, sizeof(ack_buffer), 0, (struct sockaddr *)client_addr, &client_addr_len) < 0){
             printf("TIMEOUT !\n");
+            segment_size = SEGMENT_SIZE;
         }
         else{
             if (compareString(ack_buffer, "ACK[0-9]{6}")){
                 acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
                 printf("ACK received for packet %06d\n", acked);
+                segment_size = segment_size*2;
             }
         }
     }while(flag_eof == 0);
