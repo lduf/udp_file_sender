@@ -162,7 +162,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         memset(header, 0, sizeof(header));
         memset(segmented_file, 0, sizeof(segmented_file));
         // Add the segment number to the header
-        sprintf(buffer, "%06d", packet_number);
+        sprintf(buffer, "%05d", packet_number);
         /*
         do{
             
