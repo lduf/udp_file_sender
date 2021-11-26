@@ -273,17 +273,17 @@ int main(int argc, char *argv[]) {
 
     //calculate the execution time
     struct timeval start, end;
-   // gettimeofday(&start, NULL);
+    gettimeofday(&start, NULL);
     send_file(new_sockfd, &client_addr, client_addr_len, buffer);
     printf("Sending process is over\n");
-   // gettimeofday(&end, NULL);
-   // double time_taken = (end.tv_sec - start.tv_sec) * 1e6;
+    gettimeofday(&end, NULL);
+    double time_taken = (end.tv_sec - start.tv_sec) * 1e6;
     
     //calculate the throughput
-  //  int file_size = get_file_size(get_file(buffer));
-   // double throughput = file_size / time_taken;
-  //  printf("Time taken: %f\n", time_taken);
-   // printf("Throughput: %f Byte/s\n", throughput);
+    int file_size = get_file_size(get_file(buffer));
+    double throughput = file_size / time_taken;
+    printf("Time taken: %f\n", time_taken);
+    printf("Throughput: %f Byte/s\n", throughput);
 
     //end the session
     end_connection(sockfd, &client_addr, client_addr_len);
