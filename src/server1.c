@@ -174,10 +174,10 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             printf("recvfrom failed.\n");
             return -1;
         }
-        if(compareString(ack_buffer, "ACK[0-9]{6}")){
-            int acked = atoi(extract(ack_buffer, "ACK[(0-9]{6})", 1));
-            printf("ACK received for packet %06d\n", acked);
-        }
+
+        int acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
+        printf("ACK received for packet %06d\n", acked);
+        
 
 
         packet_number++;
