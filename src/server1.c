@@ -105,6 +105,24 @@ int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_add
 }
 
 /**
+ * @brief This function return the file from the given path.
+ * 
+ * @param path The path of the file.
+ * 
+ * @return The file.
+ */
+FILE* get_file(char* path){
+    printf("Recherche du fichier au chemin suivant : %s", path);
+    FILE* file = fopen(path, "r");
+    if(file == NULL){
+        printf("File not found.\n");
+        return NULL;
+    }
+    return file;
+}
+
+
+/**
  * @brief This function is used to send the file to the client. It will send the file in segments of 536 bytes.
  * 
  * @param sockfd The socket file descriptor.
@@ -120,11 +138,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     
     file_name[strcspn(file_name, "\n")] = 0;
     // Open file
-    file = fopen(file_name, "r");
-    if (file == NULL){
-        printf("File not found.\n");
-        return -1;
-    }
+    file = get_file("toto");
     printf("File opened.\n");
     // Send file
     while(fread(buffer, sizeof(char), SEGMENT_SIZE, file) > 0){
