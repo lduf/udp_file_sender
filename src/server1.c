@@ -36,14 +36,11 @@ int window_size = DEFAULT_WINDOW_SIZE;
 int create_udp_server(int port, int timeout) {
     int sockfd;
     struct sockaddr_in servaddr;
-    struct timeval tv;
-    tv.tv_sec = 0;
-    tv.tv_usec = timeout;
 
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
         handle_error("socket creation failed");
     if(timeout > 0) 
-        if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO,&tv,sizeof(tv)) < 0)
+        if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout,sizeof(timeout)) < 0)
             perror("Error");
     
     printf("Socket created : %d\n", sockfd);
