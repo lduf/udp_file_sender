@@ -121,13 +121,14 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     file = fopen(file_name, "r");
     if (file == NULL)
         return -1;
-    
+    /*
     // Send file
     while(fread(buffer, sizeof(char), SEGMENT_SIZE, file) > 0){
         printf("Sending segment... %s\n", buffer);
         if (sendto(sockfd, buffer, SEGMENT_SIZE, 0, (struct sockaddr *)client_addr, client_addr_len) < 0)
             return -1;
     }
+    */
     return 0;
 }
 
