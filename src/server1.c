@@ -120,6 +120,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     // Open file
     file = fopen(file_name, "r");
     if (file == NULL)
+        printf("File not found.\n");
         return -1;
     printf("File opened.\n");
     // Send file
