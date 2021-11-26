@@ -190,7 +190,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 printf("ACK received for packet %06d\n", acked);
             }
         }
-    }while(flag_eof == 0);
+    }while(flag_eof == 0 && acked <= packet_number);
     printf("File sent.\n");
     printf("Closing file.\n");
 
