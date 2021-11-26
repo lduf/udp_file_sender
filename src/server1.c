@@ -128,7 +128,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         if (sendto(sockfd, buffer, SEGMENT_SIZE, 0, (struct sockaddr *)client_addr, client_addr_len) < 0)
             return -1;
     }
-
+    return 0;
 }
 
 
