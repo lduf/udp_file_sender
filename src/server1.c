@@ -28,12 +28,19 @@
  * 
  * @return -1 if failed, else the socket file descriptor.
  */
-int create_udp_server(int port) {
+int create_udp_server(int port, int timeout) {
     int sockfd;
     struct sockaddr_in servaddr;
+    struct timeval tv;
+    tv.tv_sec = 0;
+    tv.tv_usec = timeout;
 
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
         handle_error("socket creation failed");
+    if(timeout > 0) 
+        if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO,&tv,sizeof(tv)) < 0)
+            perror("Error");
+    
     printf("Socket created : %d\n", sockfd);
 
     memset(&servaddr, 0, sizeof(servaddr));
@@ -74,7 +81,7 @@ int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_add
     // Create new UDP listener
     do{
         new_port = random_int(1000, 9999);
-        new_sockfd = create_udp_server(new_port);
+        new_sockfd = create_udp_server(new_port, 100000);
     }while(new_sockfd == -1);
     
 
@@ -146,13 +153,14 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     // Send file
     
     int i = 6;
+    int acked = -1;
     int packet_number = 0;
     int flag_eof = 0;
     do{
+        packet_number = acked +1;
         i=6;
         memset(buffer, 0, sizeof(buffer));
         sprintf(buffer, "%06d", packet_number);
-        printf("New buffer, segment n°%c %c %c %c %c %c", buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
         do{
             buffer[i] = fgetc(file);
            // printf("%c\n", buffer[i]);
@@ -171,16 +179,14 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         char ack_buffer[16];
         memset(ack_buffer, 0, sizeof(ack_buffer));
         if(recvfrom(sockfd, ack_buffer, sizeof(ack_buffer), 0, (struct sockaddr *)client_addr, &client_addr_len) < 0){
-            printf("recvfrom failed.\n");
-            return -1;
+            printf("TIMEOUT !\n");
         }
-
-        int acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
-        printf("ACK received for packet %06d\n", acked);
+        else{
+            acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
+            printf("ACK received for packet %06d\n", acked);
+        }
         
 
-
-        packet_number++;
     }while(flag_eof == 0);
 
 
@@ -228,7 +234,7 @@ int main(int argc, char *argv[]) {
     
     printf("Server is running on port %d\n", port);
     
-    int sockfd = create_udp_server(port);
+    int sockfd = create_udp_server(port, 0);
 
     // Wait for SYN
     printf("Waiting for client to send SYN...\n");
