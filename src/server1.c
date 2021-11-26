@@ -8,6 +8,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include "includes/utils.h"
+#include "includes/server1.h"
 
 #define handle_error(msg) \
     do { perror(msg); exit(EXIT_FAILURE); } while (0)
@@ -133,9 +134,29 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             return -1;
     }
     printf("File sent.\n");
+
+    //end the session
+    end_connection(sockfd, client_addr, client_addr_len);
     return 0;
 }
 
+/**
+ * @brief This function is used to end the connection. It will send a FIN packet to the client.
+ * 
+ * @param sockfd The socket file descriptor.
+ * @param client_addr The client's address.
+ * @param client_addr_len The length of the client's address.
+ * 
+ * @return 0 if successful, -1 if failed.
+ */
+int end_connection(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr_len) {
+    char *fin = (char*)malloc(16 * sizeof(char));
+    sprintf(fin, "FIN");
+    if (sendto(sockfd, fin, strlen(fin), 0, (struct sockaddr *)client_addr, client_addr_len) < 0)
+        return -1;
+    printf("Connection ended.\n");
+    return 0;
+}
 
 
 /**
