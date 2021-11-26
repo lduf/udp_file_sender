@@ -9,7 +9,7 @@
 #include <arpa/inet.h>
 #include "includes/utils.h"
 #include "includes/server1.h"
-#include <sys/time.h>
+#include <time.h>
 
 #define handle_error(msg) \
     do { perror(msg); exit(EXIT_FAILURE); } while (0)
