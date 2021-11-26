@@ -1,13 +1,3 @@
-/**
- * @file server1.c
- * @author Lucas Dufour(contact@lucasdufour.fr)
- * @brief This program creates a tcp over udp server which listen to a given port.
- * @version 0.1
- * @date 2021-11-12
- * 
- * @copyright Copyright (c) 2021
- * 
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,101 +5,131 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netdb.h>
 #include <arpa/inet.h>
+#include "includes/utils.h"
 
-#define BUFFER_SIZE 1024
+#define handle_error(msg) \
+    do { perror(msg); exit(EXIT_FAILURE); } while (0)
+
+#define BUFFER_LIMIT 1500
+#define EVER ;;
+#define random_max 10000
+#define MAX_CONN 2
+#define LEGAL_PATH_REGEX "^FILE:(.+)\\/([^\\/]+)$"
+#define SEGMENT_SIZE 536
+#define DEFAULT_PORT 1234
+
 
 /**
- * @brief This function is used to SYN the server to the client. The client send a SYN. Then the server respond with a SYN ACK and gives the new port number.
- * Then the server waits for the client to send a ACK.
+ * @brief This function is used to create the UDP server, and bind it to the specified port.
+ * @param port The port number to bind the server to.
+ * 
+ * @return -1 if failed, else the socket file descriptor.
+ */
+int create_udp_server(int port) {
+    int sockfd;
+    struct sockaddr_in servaddr;
+
+    if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+        handle_error("socket creation failed");
+
+    memset(&servaddr, 0, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_addr.s_addr = INADDR_ANY;
+    servaddr.sin_port = htons(port);
+
+    if (bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
+        return -1;
+        //handle_error("bind failed");
+
+    return sockfd;
+}
+
+
+/**
+ * @brief This function is used to handle the SYN process. It's called when the server receives a SYN packet. It will send a SYNACK packet to the client. 
+ * This SYNACK packet will contain the port number of the server with the given format: "SYN-ACK<port>". The port number must be between 1000 and 9999.
+ * The function creates a new UDP listener and bind it to the new port number.
+ * When the SYN-ACK packed had been sent, the server will wait for the client to send an ACK packet. It returns the new socket file descriptor.
  * 
  * @param sockfd The socket file descriptor.
- * @param struct sockaddr_in client_addr .
+ * @param client_addr The client's address.
+ * @param client_addr_len The length of the client's address.
  * 
- * 
- * @return int The new port number.
+ * @return The new socket file descriptor.
  */
-int syn_server(int sockfd , struct sockaddr_in client_addr)
-{
+int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr_len) {
+    int new_sockfd;
+    char buffer[BUFFER_LIMIT];
+    char *syn_ack = (char*)malloc(11 * sizeof(char));
     int new_port = 0;
-    char buffer[BUFFER_SIZE];
-    socklen_t client_addr_len = sizeof(client_addr);
-    int n;
+    struct sockaddr_in new_servaddr;
+    socklen_t new_servaddr_len;
 
-    // Send SYN
-    printf("Sending SYNACK\n");
-    n = sendto(sockfd, "SYNACK", strlen("SYNACK"), 0, (struct sockaddr *)&client_addr, client_addr_len);
-    if (n < 0)
-    {
-        perror("sendto");
-        exit(1);
-    }
+    // Create new UDP listener
+    do{
+        new_port = random_int(1000, 9999);
+        new_sockfd = create_udp_server(new_port);
+    }while(new_sockfd == -1);
+    
+
+    // Not required
+    new_servaddr_len = sizeof(new_servaddr);
+    if (getsockname(new_sockfd, (struct sockaddr *)&new_servaddr, &new_servaddr_len) < 0)
+        handle_error("getsockname failed");
+
+    
+    // Send SYNACK
+    sprintf(syn_ack, "SYN-ACK%d", new_port);
+    if (sendto(sockfd, syn_ack, strlen(syn_ack), 0, (struct sockaddr *)client_addr, client_addr_len) < 0)
+        handle_error("sendto failed");
 
     // Receive ACK
-    printf("Receiving ACK\n");
-    n = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&client_addr, &client_addr_len);
-    if (n < 0)
-    {
-        perror("recvfrom");
-        exit(1);
+    memset(buffer, 0, BUFFER_LIMIT);
+    if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)client_addr, &client_addr_len) < 0)
+        handle_error("recvfrom failed");
+    if(compareString(buffer, "ACK")){
+        printf("Received ACK from client.\n");
     }
-    buffer[n] = '\0';
-    printf("Received: %s\n", buffer);
+    else{
+        printf("Received something else.\n");
+        handle_error("Received something else after SYN-ACK");
+    }
 
-    return new_port;
+    return new_sockfd;
 }
 
 /**
- * @brief This function is the main function. It create a UDP socket and bind it to the given port. Then it listen to the client.
+ * @brief This is the main function. It will create a UDP server to the given port and wait for the client to send a SYN packet. 
  * 
- * @param argc The number of arguments.
- * @param argv The arguments.
+ * @param argc The number of arguments. If argc != 2, the default port would be 1234, else it will be the second argument.
+ * @param argv The arguments. The second argument is the port number.
  * 
- * @return int The exit code.
+ * @return 0 if success, else -1.
  */
-int main(int argc, char *argv[]){
-    int sockfd;
-    int port;
-    int new_port;
-    struct sockaddr_in server_addr;
+int main(int argc, char *argv[]) {
+    int port = DEFAULT_PORT;
+
+    if (argc != 2)
+        printf("Usage: ./server <port>\n default port %d used", DEFAULT_PORT);
+    else
+        port = atoi(argv[1]);
+    
+    int sockfd = create_udp_server(port);
+
+    // Wait for SYN
     struct sockaddr_in client_addr;
-    socklen_t client_addr_len;
-    char buffer[BUFFER_SIZE];
-    int n;
-
-    if(argc != 2){
-        fprintf(stderr, "Usage: %s port\n", argv[0]);
-        exit(EXIT_FAILURE);
+    socklen_t client_addr_len = sizeof(client_addr);
+    char buffer[BUFFER_LIMIT];
+    memset(buffer, 0, BUFFER_LIMIT);
+    if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
+        handle_error("recvfrom failed");
+    if(compareString(buffer, "SYN")){
+        printf("Received SYN from client.\n");
+        int new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
+        printf("New socket: %d\n", new_sockfd);
     }
 
-    port = atoi(argv[1]);
-
-    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-    if(sockfd < 0){
-        perror("socket");
-        exit(EXIT_FAILURE);
-    }
-
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(port);
-    server_addr.sin_addr.s_addr = INADDR_ANY;
-    if(bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0){
-        perror("bind");
-        exit(EXIT_FAILURE);
-    }
-
-    client_addr_len = sizeof(client_addr);
-    n = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&client_addr, &client_addr_len);
-    if(n < 0){
-        perror("recvfrom");
-        exit(EXIT_FAILURE);
-    }
-
-    new_port = syn_server(sockfd, client_addr);
-
-    server_addr.sin_port = htons(new_port);
-    if(bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0){
-        perror("bind");
-        exit(EXIT_FAILURE);
-    }
+    return 0;
 }
