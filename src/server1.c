@@ -290,7 +290,7 @@ int main(int argc, char *argv[]) {
     int file_size = get_file_size(get_file(buffer));
     double throughput = file_size / time_taken;
     printf("Time taken: %f\n", time_taken);
-    printf("Throughput: %f Byte/s\n", throughput);
+    printf("Throughput: %E Byte/s\n", throughput);
 
     //end the session
     end_connection(sockfd, &client_addr, client_addr_len);
