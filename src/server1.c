@@ -154,7 +154,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     int packet_number = 0;
     int flag_eof = 0;
     do{
-
         char buffer[segment_size];
         char segmented_file[segment_size-7];
         packet_number = acked +1;
@@ -162,18 +161,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         memset(segmented_file, 0, sizeof(segmented_file));
         // Add the segment number to the header
         sprintf(buffer, "%06d", packet_number);
-        /*
-        do{
-            
-            buffer[i] = fgetc(file);
-           // printf("%c\n", buffer[i]);
-            if(buffer[i] == EOF ){
-                flag_eof = 1;
-            }
-            i++;
-        }while(flag_eof == 0 && i < segment_size);
-        */
-
         // Read the file
         if(fread(segmented_file, sizeof(char), segment_size-7, file) < segment_size-7){
             flag_eof = 1;
@@ -184,6 +171,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         
         if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                 printf("sendto failed.\n");
+                handle_error("sendto failed");
                 return -1;
         }
         //wait for ACK messages
