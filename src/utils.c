@@ -45,7 +45,7 @@ int random_int(int min, int max) {
  */
 
 int compareString(char string[], char rgx[]){
-	printf("regex used : %s\n", rgx);
+	//printf("regex used : %s\n", rgx);
 	regex_t regex;
 	int reti;
 	char msgbuf[100];

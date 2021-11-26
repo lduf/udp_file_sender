@@ -23,6 +23,7 @@
 #define BIT_OFFSET 7
 #define DEFAULT_PORT 1234
 #define DEFAULT_WINDOW_SIZE 5
+#define DEFAULT_TIMEOUT 50000
 
 int segment_size = DEFAULT_SEGMENT_SIZE - BIT_OFFSET;
 int window_size = DEFAULT_WINDOW_SIZE;
@@ -85,7 +86,7 @@ int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_add
     // Create new UDP listener
     do{
         new_port = random_int(1000, 9999);
-        new_sockfd = create_udp_server(new_port, 100000);
+        new_sockfd = create_udp_server(new_port, DEFAULT_TIMEOUT);
     }while(new_sockfd == -1);
     
 
@@ -171,7 +172,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         }
 
         strcat(buffer, segmented_file);
-        printf("Sending segment %06d\n", packet_number);
+        //printf("Sending segment %06d\n", packet_number);
         
         if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                 printf("sendto failed.\n");
@@ -182,12 +183,11 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         char ack_buffer[16];
         memset(ack_buffer, 0, sizeof(ack_buffer));
         if(recvfrom(sockfd, ack_buffer, sizeof(ack_buffer), 0, (struct sockaddr *)client_addr, &client_addr_len) < 0){
-            printf("TIMEOUT !\n");
+            printf("TIMEOUT on packet %d!\n", packet_number);
         }
         else{
             if (compareString(ack_buffer, "ACK[0-9]{6}")){
                 acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
-                printf("ACK received for packet %06d\n", acked);
             }
         }
     }while(flag_eof == 0 && acked <= packet_number);
