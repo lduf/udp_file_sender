@@ -112,7 +112,7 @@ int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_add
  * @return The file.
  */
 FILE* get_file(char* path){
-    printf("Recherche du fichier au chemin suivant : %s", path);
+    printf("Recherche du fichier au chemin suivant : %s\n", path);
     FILE* file = fopen(path, "r");
     if(file == NULL){
         printf("File not found.\n");
@@ -139,13 +139,30 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     file_name[strcspn(file_name, "\n")] = 0;
     // Open file
     file = get_file("./toto");
+    if(file == NULL){
+        printf("File not found.\n");
+        return -1;
+    }
     printf("File opened.\n");
     // Send file
-    while(fread(buffer, sizeof(char), SEGMENT_SIZE, file) > 0){
-        printf("Sending segment... %s\n", buffer);
-        if (sendto(sockfd, buffer, SEGMENT_SIZE, 0, (struct sockaddr *)client_addr, client_addr_len) < 0)
-            return -1;
-    }
+    
+    int i =0;
+    do{
+        i=0;
+        memset(buffer, 0, sizeof(buffer));
+        do{
+            buffer[i] = fgetc(file);
+            i++;
+        }while(buffer[i] != EOF || i < SEGMENT_SIZE);
+        printf("Sending segment %s\n", buffer);
+        /*
+        if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
+                printf("sendto failed.\n");
+                return -1;
+        }*/
+    }while(buffer[i] != EOF);
+
+
     printf("File sent.\n");
 
     //end the session
