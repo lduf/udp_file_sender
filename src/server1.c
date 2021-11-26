@@ -65,7 +65,7 @@ int create_udp_server(int port) {
 int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr_len) {
     int new_sockfd;
     char buffer[BUFFER_LIMIT];
-    char *syn_ack = (char*)malloc(11 * sizeof(char));
+    char *syn_ack = (char*)malloc(16 * sizeof(char));
     int new_port = 0;
     struct sockaddr_in new_servaddr;
     socklen_t new_servaddr_len;
