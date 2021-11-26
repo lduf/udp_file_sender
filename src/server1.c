@@ -189,7 +189,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     printf("File sent.\n");
     printf("Closing file.\n");
 
-    close(file);
+    fclose(file);
 
     return 0;
 }
