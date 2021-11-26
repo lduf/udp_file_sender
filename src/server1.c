@@ -151,9 +151,9 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         memset(buffer, 0, sizeof(buffer));
         do{
             
-            buffer[i++] = fgetc(file);
+            buffer[i] = fgetc(file);
             printf("%c\n", buffer[i]);
-            
+            i++;
         }while(buffer[i-1] != EOF || i-1 < SEGMENT_SIZE);
         printf("Sending segment %s\n", buffer);
         /*
