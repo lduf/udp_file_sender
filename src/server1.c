@@ -152,6 +152,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         i=5;
         memset(buffer, 0, sizeof(buffer));
         sprintf(buffer, "%06d", packet_number);
+        printf("New buffer, segment n°%s", buffer);
         do{
             buffer[i] = fgetc(file);
            // printf("%c\n", buffer[i]);
