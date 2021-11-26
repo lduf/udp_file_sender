@@ -55,10 +55,11 @@ int create_udp_server(int port, int timeout) {
 
     printf("Binding successful\n");
 
-    if(timeout > 0) 
+    if(timeout > 0) {
         printf("Setting timeout to %d\n", timeout);
         if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout,sizeof(timeout)) < 0)
-            perror("Error");
+            handle_error("Error");
+    }
     return sockfd;
 }
 
