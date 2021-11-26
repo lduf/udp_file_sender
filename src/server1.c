@@ -181,7 +181,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             printf("TIMEOUT !\n");
         }
         else{
-            if (stringCompare(ack_buffer, "ACK[0-9]{6}")){
+            if (compareString(ack_buffer, "ACK[0-9]{6}")){
                 acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
                 printf("ACK received for packet %06d\n", acked);
             }

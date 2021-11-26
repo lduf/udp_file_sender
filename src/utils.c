@@ -338,7 +338,7 @@ char* extract(char * src_str, const char * srch_regex, int n){
         regex_extract(str, src_str, start[0], len[0]);
 		extracted = malloc(sizeof(char)*(len[n]));
 		for(int i=start[n];i<(start[n]+len[n]);i++){
-			extracted[i-start[n]] = src_str[i];
+            extracted[i-start[n]] = src_str[i];
 		}
     }
     else printf("%s\n", regex_error_msg(error));
