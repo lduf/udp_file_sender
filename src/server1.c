@@ -151,7 +151,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     do{
         i=5;
         memset(buffer, 0, sizeof(buffer));
-        fprintf(buffer, "%06d", packet_number);
+        fprintf(*buffer, "%06d", packet_number);
         do{
             buffer[i] = fgetc(file);
             printf("%c\n", buffer[i]);
