@@ -273,12 +273,18 @@ int main(int argc, char *argv[]) {
     printf("Received file name : %s\n", buffer);
 
     //calculate the execution time
-    struct timeval start, end;
-    gettimeofday(&start, NULL);
+    // to store the execution time of code
+    double time_taken = 0.0;
+ 
+    clock_t begin = clock();
+ 
     send_file(new_sockfd, &client_addr, client_addr_len, buffer);
-    printf("Sending process is over\n");
-    gettimeofday(&end, NULL);
-    double time_taken = (end.tv_sec - start.tv_sec) * 1e6;
+ 
+    clock_t end = clock();
+ 
+    // calculate elapsed time by finding difference (end - begin) and
+    // dividing the difference by CLOCKS_PER_SEC to convert to seconds
+    time_taken += (double)(end - begin) / CLOCKS_PER_SEC;
     
     //calculate the throughput
     int file_size = get_file_size(get_file(buffer));
