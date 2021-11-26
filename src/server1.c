@@ -151,15 +151,13 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     }
     printf("File opened.\n");
     // Send file
-    int i = 6;
     int acked = -1;
     int packet_number = 0;
     int flag_eof = 0;
     do{
         packet_number = acked +1;
-        i=6;
         memset(buffer, 0, sizeof(buffer));
-        sprintf(buffer, "%06d", packet_number);
+        
         /*
         do{
             
@@ -174,6 +172,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         if(fread(buffer, sizeof(char), SEGMENT_SIZE-6, file) < SEGMENT_SIZE-6){
             flag_eof = 1;
         }
+        sprintf(buffer, "%06d%s", packet_number, buffer);
         printf("Sending segment %06d\n", packet_number);
         
         if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
