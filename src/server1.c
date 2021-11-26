@@ -117,6 +117,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     FILE *file;
     char buffer[SEGMENT_SIZE];
     
+    if (file_name[strlen(file_name)  - 1] == '\n') 
+        file_name[strlen(file_name)  - 1] = '\0';
     // Open file
     file = fopen(file_name, "r");
     if (file == NULL){
