@@ -2,13 +2,13 @@ group = DetecteurML
 all : server1
 
 server1 : server1.o utils.o
-	gcc utils.o server1.o -o ../bin/server1-$(group) 
+	gcc -O3 utils.o server1.o -o ../bin/server1-$(group) 
 
 server1.o : server1.c 
-	gcc -Wall -c -g server1.c
+	gcc -O3 -Wall -c -g server1.c
 
 utils.o : utils.c includes/utils.h
-	gcc -Wall -c -g utils.c -I /includes -o utils.o
+	gcc -O3 -Wall -c -g utils.c -I /includes -o utils.o
 
 clean :
 	rm -f *.o

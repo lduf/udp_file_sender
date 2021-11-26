@@ -104,6 +104,36 @@ int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_add
 }
 
 /**
+ * @brief This function is used to send the file to the client. It will send the file in segments of 536 bytes.
+ * 
+ * @param sockfd The socket file descriptor.
+ * @param client_addr The client's address.
+ * @param client_addr_len The length of the client's address.
+ * @param file_name The name of the file to send.
+ * 
+ * @return 0 if successful, -1 if failed.
+ */
+int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr_len, char *file_name) {
+    FILE *file;
+    char buffer[SEGMENT_SIZE];
+    
+    // Open file
+    file = fopen(file_name, "r");
+    if (file == NULL)
+        return -1;
+    
+    // Send file
+    while(fread(buffer, sizeof(char), SEGMENT_SIZE, file) > 0){
+        printf("Sending segment... %s\n", buffer);
+        if (sendto(sockfd, buffer, SEGMENT_SIZE, 0, (struct sockaddr *)client_addr, client_addr_len) < 0)
+            return -1;
+    }
+
+}
+
+
+
+/**
  * @brief This is the main function. It will create a UDP server to the given port and wait for the client to send a SYN packet. 
  * 
  * @param argc The number of arguments. If argc != 2, the default port would be 1234, else it will be the second argument.
@@ -135,9 +165,16 @@ int main(int argc, char *argv[]) {
     printf("Received : %s\n", buffer);
     if(compareString(buffer, "SYN")){
         printf("Received SYN from client.\n");
-        int new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
-        printf("New socket: %d\n", new_sockfd);
+        sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
+        printf("New socket: %d\n", sockfd);
     }
+
+    // Send file given by the client
+    if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
+        handle_error("recvfrom failed");
+
+    printf("Received file name : %s\n", buffer);
+    send_file(sockfd, &client_addr, client_addr_len, buffer);
 
     return 0;
 }
