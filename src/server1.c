@@ -39,9 +39,7 @@ int create_udp_server(int port, int timeout) {
 
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
         handle_error("socket creation failed");
-    if(timeout > 0) 
-        if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout,sizeof(timeout)) < 0)
-            perror("Error");
+    
     
     printf("Socket created : %d\n", sockfd);
 
@@ -56,6 +54,11 @@ int create_udp_server(int port, int timeout) {
         //handle_error("bind failed");
 
     printf("Binding successful\n");
+
+    if(timeout > 0) 
+        printf("Setting timeout to %d\n", timeout);
+        if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout,sizeof(timeout)) < 0)
+            perror("Error");
     return sockfd;
 }
 
