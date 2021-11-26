@@ -160,11 +160,11 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             i++;
         }while(flag_eof == 0|| i-1 < SEGMENT_SIZE);
         printf("Sending segment %s\n", buffer);
-        /*
+        
         if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                 printf("sendto failed.\n");
                 return -1;
-        }*/
+        }
     }while(flag_eof == 0);
 
 
