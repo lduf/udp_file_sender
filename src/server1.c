@@ -186,6 +186,9 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         }
     }while(flag_eof == 0);
     printf("File sent.\n");
+    printf("Closing file.\n");
+
+    close(file);
 
     return 0;
 }
