@@ -154,8 +154,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         sprintf(buffer, "%06d", packet_number);
         do{
             buffer[i] = fgetc(file);
-            printf("%c\n", buffer[i]);
-            if(buffer[i-1] == EOF ){
+           // printf("%c\n", buffer[i]);
+            if(buffer[i] == EOF ){
                 flag_eof = 1;
             }
             i++;
