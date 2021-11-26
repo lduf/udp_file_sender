@@ -143,7 +143,6 @@ FILE* get_file(char* path){
 int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr_len, char *file_name) {
     FILE *file;
     char buffer[SEGMENT_SIZE];
-    
     file_name[strcspn(file_name, "\n")] = 0;
     // Open file
     file = get_file(file_name);
@@ -152,7 +151,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     }
     printf("File opened.\n");
     // Send file
-    
     int i = 6;
     int acked = -1;
     int packet_number = 0;
@@ -169,7 +167,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 flag_eof = 1;
             }
             i++;
-        }while(flag_eof == 0 && i-1 < SEGMENT_SIZE);
+        }while(flag_eof == 0 && i < SEGMENT_SIZE);
         printf("Sending segment %06d\n", packet_number);
         
         if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
@@ -186,11 +184,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
             printf("ACK received for packet %06d\n", acked);
         }
-        
-
     }while(flag_eof == 0);
-
-
     printf("File sent.\n");
 
     return 0;
