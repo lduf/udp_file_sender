@@ -193,8 +193,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
     printf("File sent.\n");
 
-    //end the session
-    end_connection(sockfd, client_addr, client_addr_len);
     return 0;
 }
 
@@ -288,6 +286,8 @@ int main(int argc, char *argv[]) {
     printf("Time taken: %f\n", time_taken);
     printf("Throughput: %f Byte/s\n", throughput);
 
+    //end the session
+    end_connection(sockfd, &client_addr, client_addr_len);
 
     return 0;
 }
