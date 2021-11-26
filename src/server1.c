@@ -33,16 +33,19 @@ int create_udp_server(int port) {
 
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
         handle_error("socket creation failed");
+    printf("Socket created : %d\n", sockfd);
 
     memset(&servaddr, 0, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = INADDR_ANY;
     servaddr.sin_port = htons(port);
 
+    printf("Binding to port %d\n", port);
     if (bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
         return -1;
         //handle_error("bind failed");
 
+    printf("Binding successful\n");
     return sockfd;
 }
 
@@ -112,13 +115,16 @@ int main(int argc, char *argv[]) {
     int port = DEFAULT_PORT;
 
     if (argc != 2)
-        printf("Usage: ./server <port>\n default port %d used", DEFAULT_PORT);
+        printf("Usage: ./serverXXX <port>\n default port %d used\n", DEFAULT_PORT);
     else
         port = atoi(argv[1]);
+    
+    printf("Server is running on port %d\n", port);
     
     int sockfd = create_udp_server(port);
 
     // Wait for SYN
+    printf("Waiting for client to send SYN...\n");
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
     char buffer[BUFFER_LIMIT];
