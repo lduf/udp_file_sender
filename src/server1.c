@@ -169,6 +169,8 @@ int main(int argc, char *argv[]) {
         printf("New socket: %d\n", sockfd);
     }
 
+    // clear buffer
+    memset(buffer, 0, BUFFER_LIMIT);
     // Send file given by the client
     if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
         handle_error("recvfrom failed");
