@@ -28,14 +28,16 @@ STACK stack_push(STACK stack, int element) {
     printf("Pushed %d\n", element);
     printf("Computing duplicaiton\n");
     int duplicate = 0;
-    for(int i = 0; i < MAX_STACK_SIZE && i < stack_size(new_stack); i++) {
-        printf("%d\n", stack_get(new_stack, i)->element);
-        STACK tested = stack_get(stack, i);
-        if(tested != (STACK) NULL && tested->element == element) {
+
+    int i = 0;
+    while(stack != NULL) {
+        if(stack->element == element) {
             duplicate++;
         }
         stack = stack->next;
+        i++;
     }
+    
     printf("Duplicate : %d\n", duplicate);
     new_stack->duplicate = duplicate;
     if(stack_size(stack) >= MAX_STACK_SIZE) {
