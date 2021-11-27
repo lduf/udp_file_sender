@@ -207,7 +207,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
                // printf("Received ACK %d\n", acked);
                 acks = stack_push(acks, acked);
-                acks->RTT= (double)(end - begin) / CLOKS_PER_MS
+                acks->RTT= 1000 * (end - begin) / CLOCKS_PER_SEC;
                 stack_print(acks);
                 if(acked < packet_number){
                     window_size = DEFAULT_WINDOW_SIZE;
