@@ -201,7 +201,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         //wait for ACK messages
 
         FD_SET(sockfd, &readset);
-        
+        printf("estimated timeout : %d us", (int)(acks->RTT));
         tv.tv_usec = (int) estimate_timeout(acks->RTT);
         char ack_buffer[16];
         memset(ack_buffer, 0, sizeof(ack_buffer));
