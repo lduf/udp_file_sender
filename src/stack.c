@@ -131,3 +131,17 @@ int* stack_to_array(STACK stack) {
     }
     return array;
 }
+
+/**
+ * @brief This function is used to print the stack
+ * 
+ * @param stack The stack
+ */
+void stack_print(STACK stack) {
+    STACK new_stack = stack;
+    while (new_stack != NULL) {
+        printf("%d (%d) | ", new_stack->element, new_stack->duplicate);
+        new_stack = new_stack->next;
+    }
+    printf("\n");
+}

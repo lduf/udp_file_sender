@@ -133,18 +133,12 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     STACK acks = stack_init(); // Lasts received ACKs
     STACK segments = stack_init(); // Here we store the segments corresponding sequence numbers.
 
-    printf("Stacks created\n");
-
     acks = stack_push(acks, -1); // We push -1 to the stack, because we don't know the first ACK yet.
     segments = stack_push(segments, -2); // Because of the calculation method, we push -2 to the stack. So the first segment will be sent with sequence number 0.
 
-    printf("Stacks pushed\n");
 
     int packet_number = -1; // Packet number should be -1 
     int acked = acks->element; // The last ACK received
-
-    printf("Packet number : %d\n", packet_number);
-    printf("Acked : %d\n", acked);
 
     file_name[strcspn(file_name, "\n")] = 0;
     // Open file
@@ -152,7 +146,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     if(file == NULL){
         return -1;
     }
-    printf("File opened.\n");
     // Send file
     int flag_eof = 0;
     do{
@@ -199,6 +192,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             if (compareString(ack_buffer, "ACK[0-9]{6}")){
                 acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
                 acks = stack_push(acks, acked);
+                stack_print(acks);
               //  printf("Received ACK %d\n", acked);
                 if(acked < packet_number){
                     window_size = DEFAULT_WINDOW_SIZE;
