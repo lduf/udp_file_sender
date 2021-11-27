@@ -8,7 +8,7 @@
  */
 STACK stack_init() {
 
-    STACK stack = (STACK) malloc(sizeof(ELEMSTACK));
+    STACK stack = (STACK) NULL;
 	return(stack);
 }
 
