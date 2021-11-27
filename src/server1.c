@@ -168,10 +168,11 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             fseek(file, segment_size*packet_number, SEEK_SET);
             if(fread(segmented_file, sizeof(char), segment_size-7, file) < segment_size-7){
                 flag_eof = 1;
+                printf("\n\n\nEOF : %s\n\n", segmented_file);
             }
 
             strcat(buffer, segmented_file);
-            printf("Sending segment %06d\n", packet_number);
+            printf("\n \n Sending segment %06d\n", packet_number);
             
             if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                     printf("sendto failed.\n");
@@ -186,14 +187,15 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         if(recvfrom(sockfd, ack_buffer, sizeof(ack_buffer), 0, (struct sockaddr *)client_addr, &client_addr_len) < 0){
             printf("TIMEOUT on packet %d!\n", packet_number);
             window_size = DEFAULT_WINDOW_SIZE;
-            printf("Resetting window size to %d\n", window_size);
+           // printf("Resetting window size to %d\n", window_size);
         }
         else{
             if (compareString(ack_buffer, "ACK[0-9]{6}")){
                 acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
+                printf("Received ACK %d\n", acked);
                 acks = stack_push(acks, acked);
                 stack_print(acks);
-              //  printf("Received ACK %d\n", acked);
+                
                 if(acked < packet_number){
                     window_size = DEFAULT_WINDOW_SIZE;
                     //printf("Resetting window size to %d\n", window_size);
