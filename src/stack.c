@@ -37,7 +37,8 @@ STACK stack_push(STACK stack, int element) {
     }
     
     new_stack->duplicate = duplicate;
-    if(stack_size(stack) >= MAX_STACK_SIZE) {
+    if(stack_size(new_stack) >= MAX_STACK_SIZE) {
+        printf("Stack is full, popping the last element...\n");
        new_stack = stack_pop_last(new_stack);
     }
     return new_stack;
