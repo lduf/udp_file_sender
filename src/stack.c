@@ -30,7 +30,7 @@ STACK stack_push(STACK stack, int element) {
     int duplicate = 0;
     for(int i = 0; i < MAX_STACK_SIZE && i < stack_size(new_stack); i++) {
         printf("%d\n", stack_get(new_stack, i)->element);
-        int tested = stack_get(stack, i);
+        STACK tested = stack_get(stack, i);
         if(tested != (STACK) NULL && tested->element == element) {
             duplicate++;
         }
