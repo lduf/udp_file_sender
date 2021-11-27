@@ -155,6 +155,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         char segmented_file[segment_size];
 
         if(acked >= 0 && acked == last_segment_number){
+            printf("All segments have been received. Break\n");
             flag_all_received = 1;
             break;
         }
