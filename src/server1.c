@@ -154,7 +154,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         char buffer[DEFAULT_SEGMENT_SIZE];
         char segmented_file[segment_size];
 
-        if(acked == last_segment_number){
+        if(acked >= 0 && acked == last_segment_number){
             flag_all_received = 1;
             break;
         }
