@@ -135,8 +135,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
     printf("Stacks created\n");
 
-    acks = stack_push(acks, -1); // We push -2 to the stack, because we don't know the first ACK yet.
-    segments = stack_push(segments, 0);
+    acks = stack_push(acks, -1); // We push -1 to the stack, because we don't know the first ACK yet.
+    segments = stack_push(segments, -2); // Because of the calculation method, we push -2 to the stack. So the first segment will be sent with sequence number 0.
 
     printf("Stacks pushed\n");
 
@@ -160,7 +160,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         char segmented_file[segment_size];
 
         
-        int packet_number = next_seq_to_send(acks, segments);
+        packet_number = next_seq_to_send(acks, segments);
         // Windows congestion. If the window is full, wait for the client to send an ACK.
         for (int i = 0; i < window_size && flag_eof == 0; i++)
         {
