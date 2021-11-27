@@ -25,6 +25,7 @@
 #define DEFAULT_PORT 1234
 #define DEFAULT_WINDOW_SIZE 1
 #define DEFAULT_TIMEOUT 300000
+#define DEFAULT_RTT 100
 
 int create_udp_server(int port, int timeout);
 int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr_len);

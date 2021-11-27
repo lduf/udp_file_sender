@@ -134,7 +134,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     STACK segments = stack_init(); // Here we store the segments corresponding sequence numbers.
 
     acks = stack_push(acks, -1); // We push -1 to the stack, because we don't know the first ACK yet.
-    acks->RTT = 0; // We initialize the RTT to 0.
+    acks->RTT = DEFAULT_RTT; // We initialize the RTT to 50.
     segments = stack_push(segments, -2); // Because of the calculation method, we push -2 to the stack. So the first segment will be sent with sequence number 0.
 
 
