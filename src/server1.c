@@ -166,11 +166,11 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         char segmented_file[segment_size];
 
         
-            packet_number = acked +1;
+            packet_number = acked;
         // Windows congestion. If the window is full, wait for the client to send an ACK.
         for (int i = 0; i < window_size && flag_eof == 0; i++)
         {
-            packet_number = packet_number + i;
+            packet_number = packet_number + 1;
             memset(buffer, 0, sizeof(buffer));
             memset(segmented_file, 0, sizeof(segmented_file));
             // Add the segment number to the header
