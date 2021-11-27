@@ -7,7 +7,7 @@
  * @return stack The stack
  */
 STACK stack_init() {
-    STACK stack = (STACK) NULL;
+    STACK stack = (STACK) malloc(sizeof(ELEMSTACK));
 	
 	return(stack);
 }
