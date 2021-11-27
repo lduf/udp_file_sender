@@ -10,3 +10,4 @@ STACK stack_pop_last(STACK stack);
 STACK stack_get(STACK stack, int i);
 int stack_size(STACK stack);
 int* stack_to_array(STACK stack);
+void stack_print(STACK stack);
