@@ -213,13 +213,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         char ack_buffer[16];
         memset(ack_buffer, 0, sizeof(ack_buffer));
 
-        int retval = select(1, &readset, NULL, NULL, &tv);
-
-        if (retval == -1)
-            perror("select()");
-        else if (retval == 0){
+        if (select(1, &readset, NULL, NULL, &tv)== 0){
             printf("TIMEOUT on packet %d!\n", packet_number);
-            
         }
         else{
             printf("Received ACK on packet %d\n", packet_number);
