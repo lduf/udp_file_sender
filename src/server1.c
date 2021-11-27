@@ -127,13 +127,25 @@ FILE* get_file(char* path){
 int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr_len, char *file_name) {
     FILE *file;
 
+    printf("I have to send the file\n");
+
     // Theses stacks are used to store data in order to implement some TCP mechanisms 
     STACK acks = stack_init(); // Lasts received ACKs
     STACK segments = stack_init(); // Here we store the segments corresponding sequence numbers.
 
+    printf("Stacks created");
+
+    acks = stack_push(acks, -1);
+    segments = stack_push(segments, 0);
+
+    printf("Stacks pushed");
+
     int packet_number = next_seq_to_send(acks, segments);
     int acked = acks->element; // The last ACK received
 
+    printf("Packet number : %d\n", packet_number);
+    printf("Acked : %d\n", acked);
+    
     file_name[strcspn(file_name, "\n")] = 0;
     // Open file
     file = get_file(file_name);
@@ -142,8 +154,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     }
     printf("File opened.\n");
     // Send file
-    acks = stack_push(acks, -1);
-    segments = stack_push(segments, 0);
     int flag_eof = 0;
     do{
         char buffer[DEFAULT_SEGMENT_SIZE];
