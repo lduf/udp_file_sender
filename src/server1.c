@@ -203,7 +203,14 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             if (compareString(ack_buffer, "ACK[0-9]{6}")){
                 acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
                 printf("Received ACK %d\n", acked);
-                window_size = window_size*2;
+                if(acked < packet_number){
+                    window_size = DEFAULT_WINDOW_SIZE;
+                    printf("Resetting window size to %d\n", window_size);
+                }
+                else{
+                    window_size = window_size * 2;
+                    printf("Apscaling the window size to %d\n", window_size);
+                }
             }
         }
     }while(flag_eof == 0 && acked <= packet_number);
