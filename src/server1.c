@@ -9,7 +9,7 @@ int window_size = DEFAULT_WINDOW_SIZE;
  * 
  * @return -1 if failed, else the socket file descriptor.
  */
-int create_udp_server(int port, int timeout) {
+int create_udp_server(int port) {
     int sockfd;
     struct sockaddr_in servaddr;
 
@@ -31,14 +31,6 @@ int create_udp_server(int port, int timeout) {
 
     printf("Binding successful\n");
 
-    if(timeout > 0) {
-        struct timeval tv;
-        tv.tv_sec = 0;
-        tv.tv_usec = timeout;
-        printf("Setting timeout to %d\n", timeout);
-        if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv,sizeof(tv)) < 0)
-            handle_error("Error");
-    }
     return sockfd;
 }
 
@@ -66,7 +58,7 @@ int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_add
     // Create new UDP listener
     do{
         new_port = random_int(1000, 9999);
-        new_sockfd = create_udp_server(new_port, DEFAULT_TIMEOUT);
+        new_sockfd = create_udp_server(new_port);
     }while(new_sockfd == -1);
     
 
@@ -208,7 +200,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         }
 
         //wait for ACK messages
-        tv.tv_usec = (int) estimate_timeout(acks->RTT)*1000;
+        tv.tv_usec = (int) estimate_timeout(acks->RTT)*10000;
         printf("Estimated timeout : %d\n", estimate_timeout(acks->RTT));
         char ack_buffer[16];
         memset(ack_buffer, 0, sizeof(ack_buffer));
@@ -301,7 +293,7 @@ int main(int argc, char *argv[]) {
     
     printf("Server is running on port %d\n", port);
     
-    int sockfd = create_udp_server(port, 0);
+    int sockfd = create_udp_server(port);
 
     // Wait for SYN
     printf("Waiting for client to send SYN...\n");
