@@ -208,7 +208,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                     printf("Resetting window size to %d\n", window_size);
                 }
                 else{
-                    window_size = window_size * 2;
+                    window_size = window_size * 1;
                     printf("Apscaling the window size to %d\n", window_size);
                 }
             }
