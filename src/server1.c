@@ -154,9 +154,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         char buffer[DEFAULT_SEGMENT_SIZE];
         char segmented_file[segment_size];
 
-        printf("Acked : %d , last_segment_number : %d", acked, last_segment_number);
         if(acked >= 0 && acked == last_segment_number){
-            printf("All segments have been received. Break\n");
             flag_all_received = 1;
             break;
         }
@@ -177,7 +175,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             if(fread(segmented_file, sizeof(char), segment_size-7, file) < segment_size-7){
                 flag_eof = 1;
                 last_segment_number = packet_number;
-                printf("\n\n\nEOF %d: %s\n\n", packet_number, segmented_file);
             }
 
             strcat(buffer, segmented_file);
@@ -201,7 +198,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         else{
             if (compareString(ack_buffer, "ACK[0-9]{6}")){
                 acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
-                printf("Received ACK %d\n", acked);
+               // printf("Received ACK %d\n", acked);
                 acks = stack_push(acks, acked);
                 stack_print(acks);
                 if(acked < packet_number){
