@@ -17,6 +17,11 @@ int next_seq_to_send(STACK acks, STACK segs) {
         printf("Too many duplicate ACKs, sending back the segment n° %d...\n", last_ack+1);
         return last_ack + 1;
     } else {
-        return last_seg + 1;
+        if(last_ack > last_seg) {
+            printf("Duplicate ACK resolved, sending the next segment n° %d...\n", last_ack+1);
+            return last_ack + 1;
+        } else {
+            return last_seg + 1;
+        }
     }
 } 
