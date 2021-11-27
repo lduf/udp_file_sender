@@ -133,19 +133,19 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     STACK acks = stack_init(); // Lasts received ACKs
     STACK segments = stack_init(); // Here we store the segments corresponding sequence numbers.
 
-    printf("Stacks created");
+    printf("Stacks created\n");
 
     acks = stack_push(acks, -1);
     segments = stack_push(segments, 0);
 
-    printf("Stacks pushed");
+    printf("Stacks pushed\n");
 
     int packet_number = next_seq_to_send(acks, segments);
     int acked = acks->element; // The last ACK received
 
     printf("Packet number : %d\n", packet_number);
     printf("Acked : %d\n", acked);
-    
+
     file_name[strcspn(file_name, "\n")] = 0;
     // Open file
     file = get_file(file_name);
