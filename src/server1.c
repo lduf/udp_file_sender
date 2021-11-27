@@ -135,12 +135,12 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
     printf("Stacks created\n");
 
-    acks = stack_push(acks, -1);
+    acks = stack_push(acks, -1); // We push -2 to the stack, because we don't know the first ACK yet.
     segments = stack_push(segments, 0);
 
     printf("Stacks pushed\n");
 
-    int packet_number = next_seq_to_send(acks, segments);
+    int packet_number = -1; // Packet number should be -1 
     int acked = acks->element; // The last ACK received
 
     printf("Packet number : %d\n", packet_number);
