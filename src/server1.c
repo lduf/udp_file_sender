@@ -189,7 +189,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             }
 
             strcat(buffer, segmented_file);
-            printf("\n \n Sending segment %06d\n", packet_number);
+            //printf("\n \n Sending segment %06d\n", packet_number);
             begin = clock();
             if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                     printf("sendto failed.\n");
@@ -202,7 +202,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
         FD_SET(sockfd, &readset);
         tv.tv_usec = (int) estimate_timeout(acks->RTT);
-        printf("Estimated timeout : %d\n", estimate_timeout(acks->RTT));
         char ack_buffer[16];
         memset(ack_buffer, 0, sizeof(ack_buffer));
 
@@ -221,7 +220,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 // printf("Received ACK %d\n", acked);
                     acks = stack_push(acks, acked);
                     acks->RTT= 1000000 * (double) (end - begin) / CLOCKS_PER_SEC; // RTT in microseconds
-                    stack_print(acks);
+                  //  stack_print(acks);
                     if(acked < packet_number){
                         window_size = DEFAULT_WINDOW_SIZE;
                         //printf("Resetting window size to %d\n", window_size);
