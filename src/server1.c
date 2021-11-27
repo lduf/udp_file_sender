@@ -1,32 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include "includes/utils.h"
 #include "includes/server1.h"
-#include <time.h>
-
-#define handle_error(msg) \
-    do { perror(msg); exit(EXIT_FAILURE); } while (0)
-
-#define BUFFER_LIMIT 1500
-#define EVER ;;
-#define random_max 10000
-#define MAX_CONN 2
-#define LEGAL_PATH_REGEX "^FILE:(.+)\\/([^\\/]+)$"
-#define DEFAULT_SEGMENT_SIZE 536
-#define BIT_OFFSET 7
-#define DEFAULT_PORT 1234
-#define DEFAULT_WINDOW_SIZE 1
-#define DEFAULT_TIMEOUT 300000
 
 int segment_size = DEFAULT_SEGMENT_SIZE - BIT_OFFSET;
 int window_size = DEFAULT_WINDOW_SIZE;
+
 /**
  * @brief This function is used to create the UDP server, and bind it to the specified port.
  * @param port The port number to bind the server to.
@@ -150,6 +126,14 @@ FILE* get_file(char* path){
  */
 int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr_len, char *file_name) {
     FILE *file;
+
+    // Theses stacks are used to store data in order to implement some TCP mechanisms 
+    STACK acks = stack_init(); // Lasts received ACKs
+    STACK segments = stack_init(); // Here we store the segments corresponding sequence numbers.
+
+    int packet_number = next_seq_to_send(acks, segments);
+    int acked = acks->element; // The last ACK received
+
     file_name[strcspn(file_name, "\n")] = 0;
     // Open file
     file = get_file(file_name);
@@ -158,19 +142,21 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     }
     printf("File opened.\n");
     // Send file
-    int acked = -1;
-    int packet_number = 0;
+    acks = stack_push(acks, -1);
+    segments = stack_push(segments, 0);
     int flag_eof = 0;
     do{
         char buffer[DEFAULT_SEGMENT_SIZE];
         char segmented_file[segment_size];
 
         
-            packet_number = acked;
+        int packet_number = next_seq_to_send(acks, segments);
         // Windows congestion. If the window is full, wait for the client to send an ACK.
         for (int i = 0; i < window_size && flag_eof == 0; i++)
         {
-            packet_number = packet_number + 1;
+            segments = stack_push(segments, packet_number);
+            packet_number = next_seq_to_send(acks, segments);
+
             memset(buffer, 0, sizeof(buffer));
             memset(segmented_file, 0, sizeof(segmented_file));
             // Add the segment number to the header
@@ -202,6 +188,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         else{
             if (compareString(ack_buffer, "ACK[0-9]{6}")){
                 acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
+                acks = stack_push(acks, acked);
                 printf("Received ACK %d\n", acked);
                 if(acked < packet_number){
                     window_size = DEFAULT_WINDOW_SIZE;
