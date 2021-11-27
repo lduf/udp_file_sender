@@ -209,7 +209,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             printf("TIMEOUT on packet %d!\n", packet_number);
         }
         else{
-            printf("Received ACK on packet %d\n", packet_number);
+            //printf("Received ACK on packet %d\n", packet_number);
             if(recvfrom(sockfd, ack_buffer, sizeof(ack_buffer), 0, (struct sockaddr *)client_addr, &client_addr_len) < 0){
                 printf("recvfrom failed.\n");
             }
