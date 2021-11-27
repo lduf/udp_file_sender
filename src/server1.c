@@ -126,7 +126,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
     // Initialize the set.
     FD_ZERO(&readset);
-    FD_SET(sockfd, &readset);
 
     // Initialize time out struct.
     tv.tv_sec = 0;
@@ -200,12 +199,14 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         }
 
         //wait for ACK messages
+
+        FD_SET(sockfd, &readset);
         tv.tv_usec = (int) estimate_timeout(acks->RTT)*10000;
         printf("Estimated timeout : %d\n", estimate_timeout(acks->RTT));
         char ack_buffer[16];
         memset(ack_buffer, 0, sizeof(ack_buffer));
 
-        if (select(1, &readset, NULL, NULL, &tv)== 0){
+        if (select(sockfd+1, &readset, NULL, NULL, &tv)== 0){
             printf("TIMEOUT on packet %d!\n", packet_number);
         }
         else{
