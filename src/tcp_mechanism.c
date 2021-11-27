@@ -1,5 +1,7 @@
 #include "includes/tcp_mechanism.h"
 
+double sRtt = 0;
+double devRtt = 0;
 /**
  * @brief This function is used to give the next packet to send. It implement the fast retransmission mechanism.
  * 
@@ -25,3 +27,16 @@ int next_seq_to_send(STACK acks, STACK segs) {
         }
     }
 } 
+
+/**
+ * @brief This function is used to estimate the timeout based on the RTT.
+ * 
+ * @param rtt The last mesured rtt
+ * 
+ * @return int The new timeout
+ */
+int estimate_timeout(double rtt) {
+    sRtt = (1 - ALPHA) * sRtt + ALPHA * ALPHA*rtt;
+    devRtt = (1 - BETA) * devRtt + BETA * fabs(rtt - sRtt);
+    return (int) sRtt + 4 * devRtt;
+}

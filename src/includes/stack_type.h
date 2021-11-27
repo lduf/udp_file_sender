@@ -5,6 +5,7 @@
 struct model_elem {
   int element ;
   int duplicate;
+  double RTT;
   struct model_elem* next;
 };
 

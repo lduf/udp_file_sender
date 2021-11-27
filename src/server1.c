@@ -134,6 +134,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     STACK segments = stack_init(); // Here we store the segments corresponding sequence numbers.
 
     acks = stack_push(acks, -1); // We push -1 to the stack, because we don't know the first ACK yet.
+    acks->RTT = 0; // We initialize the RTT to 0.
     segments = stack_push(segments, -2); // Because of the calculation method, we push -2 to the stack. So the first segment will be sent with sequence number 0.
 
 
@@ -150,6 +151,10 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     // Send file
     int flag_eof = 0;
     int flag_all_received = 0;
+
+    //clocks
+    clock_t begin;
+    clock_t end;
     do{
         char buffer[DEFAULT_SEGMENT_SIZE];
         char segmented_file[segment_size];
@@ -179,7 +184,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
             strcat(buffer, segmented_file);
             printf("\n \n Sending segment %06d\n", packet_number);
-            
+            begin = clock();
             if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                     printf("sendto failed.\n");
                     handle_error("sendto failed");
@@ -188,6 +193,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         }
 
         //wait for ACK messages
+        printf("Estimated timeout : %d\n", estimate_timeout(acks->RTT));
         char ack_buffer[16];
         memset(ack_buffer, 0, sizeof(ack_buffer));
         if(recvfrom(sockfd, ack_buffer, sizeof(ack_buffer), 0, (struct sockaddr *)client_addr, &client_addr_len) < 0){
@@ -196,10 +202,12 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
            // printf("Resetting window size to %d\n", window_size);
         }
         else{
+            end = clock();
             if (compareString(ack_buffer, "ACK[0-9]{6}")){
                 acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
                // printf("Received ACK %d\n", acked);
                 acks = stack_push(acks, acked);
+                acks->RTT= (double)(end - begin);
                 stack_print(acks);
                 if(acked < packet_number){
                     window_size = DEFAULT_WINDOW_SIZE;
