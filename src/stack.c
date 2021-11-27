@@ -29,6 +29,7 @@ STACK stack_push(STACK stack, int element) {
     printf("Computing duplicaiton\n");
     int duplicate = 0;
     for(int i = 0; i < MAX_STACK_SIZE && i < stack_size(new_stack); i++) {
+        printf("%d\n", stack_get(new_stack, i)->element);
         if(stack_get(stack, i)->element == element) {
             duplicate++;
         }
