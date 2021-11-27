@@ -38,5 +38,6 @@ int next_seq_to_send(STACK acks, STACK segs) {
 int estimate_timeout(double rtt) {
     sRtt = (1 - ALPHA) * sRtt + ALPHA * ALPHA*rtt;
     devRtt = (1 - BETA) * devRtt + BETA * fabs(rtt - sRtt);
+    printf("Estimated RTT: %f ms\n", sRtt);
     return (int) sRtt + 4 * devRtt;
 }
