@@ -153,8 +153,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     int flag_all_received = 0;
 
     //clocks
-    clock_t begin;
-    clock_t end;
+    clock_t begin =0;
+    clock_t end = 0;
     do{
         char buffer[DEFAULT_SEGMENT_SIZE];
         char segmented_file[segment_size];
@@ -207,7 +207,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
                // printf("Received ACK %d\n", acked);
                 acks = stack_push(acks, acked);
-                acks->RTT= 1000 * (end - begin) / CLOCKS_PER_SEC;
+                acks->RTT= 1000 * (double) (end - begin) / CLOCKS_PER_SEC;
                 stack_print(acks);
                 if(acked < packet_number){
                     window_size = DEFAULT_WINDOW_SIZE;
