@@ -140,7 +140,7 @@ int* stack_to_array(STACK stack) {
 void stack_print(STACK stack) {
     STACK new_stack = stack;
     while (new_stack != NULL) {
-        printf("%d (%d) | ", new_stack->element, new_stack->duplicate);
+        printf("%d (%d) %d ms| ", new_stack->element, new_stack->duplicate, new_stack->RTT);
         new_stack = new_stack->next;
     }
     printf("\n");
