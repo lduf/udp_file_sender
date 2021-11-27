@@ -24,7 +24,7 @@
 #define BIT_OFFSET 7
 #define DEFAULT_PORT 1234
 #define DEFAULT_WINDOW_SIZE 1
-#define DEFAULT_TIMEOUT 300000
+#define DEFAULT_TIMEOUT 300
 #define DEFAULT_RTT 100
 
 int create_udp_server(int port, int timeout);
