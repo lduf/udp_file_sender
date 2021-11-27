@@ -176,7 +176,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             if(fread(segmented_file, sizeof(char), segment_size-7, file) < segment_size-7){
                 flag_eof = 1;
                 last_segment_number = packet_number;
-                printf("\n\n\nEOF : %s\n\n", segmented_file);
+                printf("\n\n\nEOF %d: %s\n\n", packet_number, segmented_file);
             }
 
             strcat(buffer, segmented_file);
