@@ -204,7 +204,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 }
             }
         }
-    }while(flag_eof == 0 && acks->element == segments->element); // We send the file until we reach the end of the file AND until we receive an ACK for the last sent packet.
+    }while(flag_eof == 1 && acks->element == segments->element); // We send the file until we reach the end of the file AND until we receive an ACK for the last sent packet.
     printf("File sent.\n");
     printf("Closing file.\n");
 
