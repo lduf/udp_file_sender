@@ -213,15 +213,17 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         char ack_buffer[16];
         memset(ack_buffer, 0, sizeof(ack_buffer));
 
-        int retval = select(sockfd+1, &readset, NULL, NULL, &tv);
+        int retval = select(1, &readset, NULL, NULL, &tv);
 
         if (retval == -1)
             perror("select()");
-        else if (retval){
-            if(recvfrom(sockfd, ack_buffer, sizeof(ack_buffer), 0, (struct sockaddr *)client_addr, &client_addr_len) < 0){
+        else if (retval == 0){
             printf("TIMEOUT on packet %d!\n", packet_number);
-            window_size = DEFAULT_WINDOW_SIZE;
-           // printf("Resetting window size to %d\n", window_size);
+            
+        }
+        else{
+            if(recvfrom(sockfd, ack_buffer, sizeof(ack_buffer), 0, (struct sockaddr *)client_addr, &client_addr_len) < 0){
+                printf("recvfrom failed.\n");
             }
             else{
                 end = clock();
@@ -241,9 +243,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                     }
                 }
             }
-        }
-        else{
-            printf("TIMEOUT on packet %d!\n", packet_number);
         }
      
         

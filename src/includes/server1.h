@@ -20,12 +20,12 @@
 #define random_max 10000
 #define MAX_CONN 2
 #define LEGAL_PATH_REGEX "^FILE:(.+)\\/([^\\/]+)$"
-#define DEFAULT_SEGMENT_SIZE 1007
+#define DEFAULT_SEGMENT_SIZE 1307
 #define BIT_OFFSET 7
 #define DEFAULT_PORT 1234
 #define DEFAULT_WINDOW_SIZE 1
 #define DEFAULT_TIMEOUT 300
-#define DEFAULT_RTT 100
+#define DEFAULT_RTT 250
 
 int create_udp_server(int port, int timeout);
 int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr_len);
