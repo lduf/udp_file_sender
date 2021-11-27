@@ -16,11 +16,11 @@ int next_seq_to_send(STACK acks, STACK segs) {
     int last_seg = segs->element;
 
     if (acks->duplicate > MAX_DUPLICATE_ACK) {
-        printf("Too many duplicate ACKs, sending back the segment n° %d...\n", last_ack+1);
+       // printf("Too many duplicate ACKs, sending back the segment n° %d...\n", last_ack+1);
         return last_ack + 1;
     } else {
         if(last_ack > last_seg && last_seg >= 0) {
-            printf("Duplicate ACK resolved, sending the next segment n° %d...\n", last_ack+1);
+            //printf("Duplicate ACK resolved, sending the next segment n° %d...\n", last_ack+1);
             return last_ack + 1;
         } else {
             return last_seg + 1;
@@ -39,5 +39,5 @@ int estimate_timeout(double rtt) {
     sRtt = (1 - ALPHA) * sRtt + ALPHA*rtt;
     devRtt = (1 - BETA) * devRtt + BETA * fabs(rtt - sRtt);
     //printf("Estimated RTT: %f us\n", sRtt);
-    return (int) 2*(sRtt + 4 * devRtt);
+    return (int) 10*(sRtt + 4 * devRtt);
 }
