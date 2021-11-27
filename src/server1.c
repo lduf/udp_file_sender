@@ -154,6 +154,10 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         char buffer[DEFAULT_SEGMENT_SIZE];
         char segmented_file[segment_size];
 
+        if(acked == last_segment_number){
+            flag_all_received = 1;
+            break;
+        }
         
         packet_number = next_seq_to_send(acks, segments);
         // Windows congestion. If the window is full, wait for the client to send an ACK.
@@ -198,9 +202,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 printf("Received ACK %d\n", acked);
                 acks = stack_push(acks, acked);
                 stack_print(acks);
-                if(acked == last_segment_number){
-                    flag_all_received = 1;
-                }
                 if(acked < packet_number){
                     window_size = DEFAULT_WINDOW_SIZE;
                     //printf("Resetting window size to %d\n", window_size);
