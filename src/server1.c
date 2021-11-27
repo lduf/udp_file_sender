@@ -202,12 +202,12 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
         FD_SET(sockfd, &readset);
         printf("estimated timeout : %d us", (int)(acks->RTT));
-        tv.tv_usec = (int) estimate_timeout(acks->RTT);
+        tv.tv_usec = estimate_timeout(acks->RTT);
         char ack_buffer[16];
         memset(ack_buffer, 0, sizeof(ack_buffer));
 
         if (select(sockfd+1, &readset, NULL, NULL, &tv)== 0){
-            printf("TIMEOUT %d us!\n", (int) tv.tv_usec);
+            printf("TIMEOUT %d us!\n", tv.tv_usec);
         }
         else{
             //printf("Received ACK on packet %d\n", packet_number);
