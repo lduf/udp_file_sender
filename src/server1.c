@@ -139,6 +139,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
     int packet_number = -1; // Packet number should be -1 
     int acked = acks->element; // The last ACK received
+    int last_segment_number = -1; // The last segment number sent
 
     file_name[strcspn(file_name, "\n")] = 0;
     // Open file
@@ -148,6 +149,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     }
     // Send file
     int flag_eof = 0;
+    int flag_all_received = 0;
     do{
         char buffer[DEFAULT_SEGMENT_SIZE];
         char segmented_file[segment_size];
@@ -168,6 +170,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             fseek(file, segment_size*packet_number, SEEK_SET);
             if(fread(segmented_file, sizeof(char), segment_size-7, file) < segment_size-7){
                 flag_eof = 1;
+                last_segment_number = packet_number;
                 printf("\n\n\nEOF : %s\n\n", segmented_file);
             }
 
@@ -195,7 +198,9 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 printf("Received ACK %d\n", acked);
                 acks = stack_push(acks, acked);
                 stack_print(acks);
-                
+                if(acked == last_segment_number){
+                    flag_all_received = 1;
+                }
                 if(acked < packet_number){
                     window_size = DEFAULT_WINDOW_SIZE;
                     //printf("Resetting window size to %d\n", window_size);
@@ -206,7 +211,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 }
             }
         }
-    }while(flag_eof !=1 && acked <= packet_number); // We send the file until we reach the end of the file AND until we receive an ACK for the last sent packet.
+    }while(flag_eof == 0 || flag_all_received == 0); // We send the file until we reach the end of the file AND until we receive an ACK for the last sent packet.
     printf("File sent.\n");
     printf("Closing file.\n");
 
