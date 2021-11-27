@@ -168,7 +168,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         
             packet_number = acked +1;
         // Windows congestion. If the window is full, wait for the client to send an ACK.
-        for (int i = 0; i < window_size; i++)
+        for (int i = 0; i < window_size && flag_eof == 0; i++)
         {
             packet_number = packet_number + i;
             memset(buffer, 0, sizeof(buffer));
@@ -182,7 +182,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             }
 
             strcat(buffer, segmented_file);
-            //printf("Sending segment %06d\n", packet_number);
+            printf("Sending segment %06d\n", packet_number);
             
             if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                     printf("sendto failed.\n");
@@ -202,6 +202,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         else{
             if (compareString(ack_buffer, "ACK[0-9]{6}")){
                 acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1));
+                printf("Received ACK %d\n", acked);
                 window_size = window_size*2;
             }
         }
