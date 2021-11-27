@@ -25,8 +25,6 @@ STACK stack_push(STACK stack, int element) {
     new_stack->element = element;
     new_stack->next = stack;
     
-    printf("Pushed %d\n", element);
-    printf("Computing duplicaiton\n");
     int duplicate = 0;
 
     int i = 0;
@@ -38,7 +36,6 @@ STACK stack_push(STACK stack, int element) {
         i++;
     }
     
-    printf("Duplicate : %d\n", duplicate);
     new_stack->duplicate = duplicate;
     if(stack_size(stack) >= MAX_STACK_SIZE) {
        new_stack = stack_pop_last(new_stack);
