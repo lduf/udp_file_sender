@@ -182,8 +182,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             packet_number = next_seq_to_send(acks, segments, timedout);
             //Here we add the previous packet number to the sent segments stack.
             segments = stack_push(segments, packet_number);
-            printf("Segment stack : \n");
-            stack_print(segments);
 
             // Clear the buffers
             memset(buffer, 0, sizeof(buffer));
@@ -216,6 +214,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
             // Send the segment
             
+            printf("Segment stack : \n");
+            stack_print(segments);
             if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                     printf("sendto failed.\n");
                     handle_error("sendto failed");
