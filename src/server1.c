@@ -353,7 +353,7 @@ int main(int argc, char *argv[]) {
     //calculate the throughput
     int file_size = get_file_size(get_file(buffer));
     double throughput = file_size / time_taken;
-    printf("File size %d", file_size);
+    printf("File size %d\n", file_size);
     printf("Time taken: %f\n", time_taken);
     printf("Throughput: %E Byte/s\n", throughput);
 
