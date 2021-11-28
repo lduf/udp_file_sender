@@ -195,7 +195,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             fseek(file, segment_size*packet_number, SEEK_SET);
 
             int sentB = fread(segmented_file, sizeof(char), segment_size, file);
-            segment->RTT = sentB;
+            segments->RTT = sentB;
 
             if( sentB< segment_size){
                 // If the file is finished, we send the last segment with the flag EOF
