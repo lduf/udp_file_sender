@@ -196,6 +196,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 // If the file is finished, we send the last segment with the flag EOF
                 flag_eof = 1;
                 last_segment_number = packet_number;
+                printf("File finished on packet n°%d.\n", last_segment_number);
             }
 
             // Concate the header and the file
