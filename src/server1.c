@@ -221,7 +221,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 // printf("Received ACK %d\n", acked);
                     acks = stack_push(acks, acked);
                     acks->RTT= 1000000 * (double) (end - begin) / CLOCKS_PER_SEC; // RTT in microseconds
-                  //  stack_print(acks);
+                    stack_print(acks);
                     if(acked < packet_number){
                         window_size = DEFAULT_WINDOW_SIZE;
                         //printf("Resetting window size to %d\n", window_size);
