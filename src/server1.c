@@ -141,7 +141,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
     acks = stack_push(acks, -1); // We push -1 to the stack, because we don't know the first ACK yet.
     acks->RTT = DEFAULT_RTT; // We initialize the RTT to 50.
-    segments = stack_push(segments, 0); // Because of the calculation method, we push -2 to the stack. So the first segment will be sent with sequence number 0.
+    segments = stack_push(segments, -1); // Because of the calculation method, we push -2 to the stack. So the first segment will be sent with sequence number 0.
 
 
     int packet_number = -1; // Packet number should be -1 
@@ -203,7 +203,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             // Concate the header and the file
             strcat(buffer, segmented_file);
             printf("\n \n Sending segment %06d\n", packet_number);
-            printf("||| ------------ ||| \n %s\n||| ------------ ||| \n", buffer);
+            printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
             // If we received an ACK for previous segment, we start the timer. Else the previous timer is still running.
             if(timedout == 0){
                 begin = clock();
