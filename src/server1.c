@@ -212,7 +212,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         memset(ack_buffer, 0, sizeof(ack_buffer));
 
         if (select(sockfd+1, &readset, NULL, NULL, &tv)== 0){
-            printf("TIMEOUT %ld us!\n", tv.tv_usec);
+            printf("TIMEOUT for packet %d !\n", packet_number);
             timedout = 1;
         }
         else{
