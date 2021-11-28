@@ -340,19 +340,20 @@ int main(int argc, char *argv[]) {
     // to store the execution time of code
     double time_taken = 0.0;
  
-    clock_t begin = clock();
+    clock_t beginD = clock();
  
     send_file(new_sockfd, &client_addr, client_addr_len, buffer);
  
-    clock_t end = clock();
+    clock_t endD = clock();
  
     // calculate elapsed time by finding difference (end - begin) and
     // dividing the difference by CLOCKS_PER_SEC to convert to seconds
-    time_taken += (double)(end - begin) / CLOCKS_PER_SEC;
+    time_taken += (double)(endD - beginD) / CLOCKS_PER_SEC;
     
     //calculate the throughput
     int file_size = get_file_size(get_file(buffer));
     double throughput = file_size / time_taken;
+    printf("File size %d", file_size);
     printf("Time taken: %f\n", time_taken);
     printf("Throughput: %E Byte/s\n", throughput);
 
