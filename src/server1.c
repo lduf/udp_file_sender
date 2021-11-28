@@ -241,7 +241,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                     acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1)); //get the ACK number
                 // printf("Received ACK %d\n", acked);
                     acks = stack_push(acks, acked); // We push the ACK number to the stack.
-                    acks->RTT= 1000000 * (double) (end - begin) / CLOCKS_PER_SEC; // RTT in microseconds
+                    acks->RTT= 1000000 * (end - begin) / CLOCKS_PER_SEC; // RTT in microseconds
                     stack_print(acks);
                 }
             }
