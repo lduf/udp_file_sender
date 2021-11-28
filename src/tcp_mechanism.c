@@ -1,7 +1,7 @@
 #include "includes/tcp_mechanism.h"
 
-double sRtt = 0;
-double devRtt = 0;
+double sRtt = 500;
+double devRtt = 100;
 /**
  * @brief This function is used to give the next packet to send. It implement the fast retransmission mechanism.
  * 
@@ -15,7 +15,7 @@ int next_seq_to_send(STACK acks, STACK segs, int timedout) {
     if(timedout == 1) {
         return segs->element;
     }
-    
+
     int last_ack = acks->element;
     int last_seg = segs->element;
 
