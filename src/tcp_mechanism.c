@@ -10,8 +10,12 @@ double devRtt = 0;
  * 
  * @return int The next sequence number to send
  */
-int next_seq_to_send(STACK acks, STACK segs) {
+int next_seq_to_send(STACK acks, STACK segs, int timedout) {
 
+    if(timedout == 1) {
+        return segs->element;
+    }
+    
     int last_ack = acks->element;
     int last_seg = segs->element;
 

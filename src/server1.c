@@ -131,7 +131,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     tv.tv_sec = 0;
     tv.tv_usec = DEFAULT_TIMEOUT;
 
-
+    int timedout = 0; // Flag to check if the select timed out.
 
 
 
@@ -170,12 +170,13 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             break;
         }
         
+        
         //  packet_number = next_seq_to_send(acks, segments);
         // Windows congestion. If the window is full, wait for the client to send an ACK.
         for (int i = 0; i < window_size && flag_all_received == 0; i++)
         {
             segments = stack_push(segments, packet_number);
-            packet_number = next_seq_to_send(acks, segments);
+            packet_number = next_seq_to_send(acks, segments, timedout);
 
             memset(buffer, 0, sizeof(buffer));
             memset(segmented_file, 0, sizeof(segmented_file));
@@ -190,7 +191,11 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
             strcat(buffer, segmented_file);
             //printf("\n \n Sending segment %06d\n", packet_number);
-            begin = clock();
+
+            if(timedout == 0){
+                begin = clock();
+            }
+            timedout = 0;
             if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                     printf("sendto failed.\n");
                     handle_error("sendto failed");
@@ -208,6 +213,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
         if (select(sockfd+1, &readset, NULL, NULL, &tv)== 0){
             printf("TIMEOUT %ld us!\n", tv.tv_usec);
+            timedout = 1;
         }
         else{
             //printf("Received ACK on packet %d\n", packet_number);
