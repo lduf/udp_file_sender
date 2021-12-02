@@ -211,9 +211,9 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
             //print the buffer content and the size of the buffer
             //printf("Buffer content : %s\n", buffer);
-            //printf("Buffer size : %d\n", strlen(buffer));
+            printf("Buffer size : %d\n", strlen(buffer));
             //printf("Segmented file content : %s\n", segmented_file);
-            //printf("Segmented file size : %d\n", strlen(segmented_file));
+            printf("Segmented file size : %d\n", strlen(segmented_file));
             printf("pre cat\n");
             strcat(buffer, segmented_file);
             printf("post cat\n");
