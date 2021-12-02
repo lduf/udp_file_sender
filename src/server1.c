@@ -157,6 +157,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     // Send file
     int flag_eof = 0;
     int flag_all_received = 0;
+    int flag_duplicated_ack =0  ;
     int next_window_size = DEFAULT_WINDOW_SIZE;
 
     //clocks
@@ -243,7 +244,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         }
 
         //wait for ACK messages
-        for (int i = 0; i < window_size && flag_all_received == 0; i++)
+        for (int i = 0; i < window_size && flag_all_received == 0 && flag_duplicated_ack == 0; i++)
         {
             next_window_size = window_size;
             // Initialize the select
@@ -274,7 +275,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                         //stack_print(acks);
                         if(acks->duplicate > MAX_DUPLICATE_ACK){
                             next_window_size = window_size/2;
-                            break;
+                            flag_duplicated_ack = 1;
                         }
                        next_window_size = window_size*2;
                     }
