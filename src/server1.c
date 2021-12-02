@@ -157,7 +157,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     // Send file
     int flag_eof = 0;
     int flag_all_received = 0;
-    int next_window_size = DEFAULT_WINDOW_SIZE;
 
     //clocks
     clock_t begin =0;
@@ -168,7 +167,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
 
     do{
-        //printf("*******\n");
+        printf("*******\n");
          // Clear the buffers
         memset(buffer, 0, sizeof(buffer));
         memset(segmented_file, 0, sizeof(segmented_file));
@@ -219,8 +218,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             //printf("Segmented file size : %d\n", strlen(segmented_file));
             //strcat(buffer, segmented_file);
             memcpy(&buffer[BIT_OFFSET], segmented_file, segment_size*sizeof(char));
-            printf("Sending segment %06d\n", packet_number);
-            //printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
+            printf("\n \n Sending segment %06d\n", packet_number);
+            printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
             // If we received an ACK for previous segment, we start the timer. Else the previous timer is still running.
             if(timedout == 0){
                 begin = clock();
@@ -240,41 +239,35 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         }
 
         //wait for ACK messages
-       // for (int i = 0; i < window_size && flag_all_received == 0; i++)
-       // {
-            //next_window_size = window_size;
-            // Initialize the select
-            FD_SET(sockfd, &readset);
-        // printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT)); 
-            tv.tv_usec = DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
-            char ack_buffer[16];
-            memset(ack_buffer, 0, sizeof(ack_buffer));
 
-            if (select(sockfd+1, &readset, NULL, NULL, &tv)== 0){
-                // If the select timed out, raise the timedout flag so the segment will be resend.
-                printf("TIMEOUT for packet %d !\n", packet_number);
-                timedout = 1;
-                //next_window_size = DEFAULT_WINDOW_SIZE;
+        // Initialize the select
+        FD_SET(sockfd, &readset);
+       // printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT)); 
+        tv.tv_usec = DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
+        char ack_buffer[16];
+        memset(ack_buffer, 0, sizeof(ack_buffer));
+
+        if (select(sockfd+1, &readset, NULL, NULL, &tv)== 0){
+            // If the select timed out, raise the timedout flag so the segment will be resend.
+            printf("TIMEOUT for packet %d !\n", packet_number);
+            timedout = 1;
+        }
+        else{
+            //printf("Received ACK on packet %d\n", packet_number);
+            if(recvfrom(sockfd, ack_buffer, sizeof(ack_buffer), 0, (struct sockaddr *)client_addr, &client_addr_len) < 0){
+                printf("recvfrom failed.\n");
             }
             else{
-                //printf("Received ACK on packet %d\n", packet_number);
-                if(recvfrom(sockfd, ack_buffer, sizeof(ack_buffer), 0, (struct sockaddr *)client_addr, &client_addr_len) < 0){
-                    printf("recvfrom failed.\n");
-                }
-                else{
-                    end = clock(); // We stop the timer.
-                    if (compareString(ack_buffer, "ACK[0-9]{6}")){
-                        acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1)); //get the ACK number
-                        printf("ACK %d\n", acked);
-                        acks = stack_push(acks, acked); // We push the ACK number to the stack.
-                        acks->RTT= 1000000 * (end - begin) / CLOCKS_PER_SEC; // RTT in microseconds
-                        //stack_print(acks);
-                       // next_window_size = window_size*2;
-                    }
+                end = clock(); // We stop the timer.
+                if (compareString(ack_buffer, "ACK[0-9]{6}")){
+                    acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1)); //get the ACK number
+                // printf("Received ACK %d\n", acked);
+                    acks = stack_push(acks, acked); // We push the ACK number to the stack.
+                    acks->RTT= 1000000 * (end - begin) / CLOCKS_PER_SEC; // RTT in microseconds
+                    stack_print(acks);
                 }
             }
-       // }
-      //  window_size = next_window_size;
+        }
      
         
     }while(flag_eof == 0 || flag_all_received == 0); // We send the file until we reach the end of the file AND until we receive an ACK for the last sent packet.
