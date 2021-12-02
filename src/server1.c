@@ -275,10 +275,13 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                         acks->RTT= 1000000 * (end - begin) / CLOCKS_PER_SEC; // RTT in microseconds
                         //stack_print(acks);
                         if(acks->duplicate > MAX_DUPLICATE_ACK){
-                            next_window_size = window_size/2;
+                            next_window_size = DEFAULT_WINDOW_SIZE;
                             flag_duplicated_ack = 1;
                         }
-                       next_window_size = window_size*2;
+                        else{
+                            next_window_size = window_size*2;
+                        }
+                       
                     }
                 }
             }
