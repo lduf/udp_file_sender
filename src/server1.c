@@ -141,7 +141,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
     acks = stack_push(acks, -1); // We push -1 to the stack, because we don't know the first ACK yet.
     acks->RTT = DEFAULT_RTT; // We initialize the RTT to 50.
-    segments = stack_push(segments, 0); // Because of the calculation method, we push -1 to the stack. So the first segment will be sent with sequence number 0.
+    segments = stack_push(segments, -1); // Because of the calculation method, we push -1 to the stack. So the first segment will be sent with sequence number 0.
 
 
     int packet_number = -1; // Packet number should be -1 
@@ -163,6 +163,12 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     clock_t end = 0;
     char buffer[DEFAULT_SEGMENT_SIZE];
     char segmented_file[segment_size];
+
+    if(sendto(sockfd, "-00001", sizeof("-00001"), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
+                    printf("sendto failed.\n");
+                    handle_error("sendto failed");
+                    return -1;
+            }
 
     do{
         printf("*******\n");
