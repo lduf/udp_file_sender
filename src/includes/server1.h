@@ -21,8 +21,8 @@
 #define random_max 10000
 #define MAX_CONN 2
 #define LEGAL_PATH_REGEX "^FILE:(.+)\\/([^\\/]+)$"
-#define DEFAULT_SEGMENT_SIZE 1307
-#define BIT_OFFSET 7
+#define DEFAULT_SEGMENT_SIZE 1306
+#define BIT_OFFSET 6
 #define DEFAULT_PORT 1234
 #define DEFAULT_WINDOW_SIZE 1
 #define DEFAULT_TIMEOUT 100000
