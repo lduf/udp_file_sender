@@ -173,6 +173,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
          // Clear the buffers
         memset(buffer, 0, sizeof(buffer));
         memset(segmented_file, 0, sizeof(segmented_file));
+        flag_duplicated_ack = 0;
 
         // Check if the file is finished and all trasmitted segments have been received.
         if(acked >= 1 && acked == last_segment_number){
