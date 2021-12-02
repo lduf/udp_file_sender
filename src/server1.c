@@ -240,8 +240,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         }
 
         //wait for ACK messages
-        for (int i = 0; i < window_size && flag_all_received == 0; i++)
-        {
+       // for (int i = 0; i < window_size && flag_all_received == 0; i++)
+       // {
             next_window_size = window_size;
             // Initialize the select
             FD_SET(sockfd, &readset);
@@ -273,7 +273,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                     }
                 }
             }
-        }
+       // }
         window_size = next_window_size;
      
         
