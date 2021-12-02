@@ -195,7 +195,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             sprintf(buffer, "%06d", packet_number); // 54 -> 000054 
             // Read the file, get the position given by the packet number
            // printf("Reading file at position %d\n", packet_number*segment_size);
-            fseek(file, segment_size*packet_number, SEEK_SET);
+            fseek(file, segment_size*(packet_number-1), SEEK_SET);
            // printf("Fseek done\n");
             int sentB = fread(segmented_file, sizeof(char), segment_size, file);
            // printf("fread done\n");
