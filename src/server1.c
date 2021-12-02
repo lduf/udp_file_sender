@@ -164,11 +164,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     char buffer[DEFAULT_SEGMENT_SIZE];
     char segmented_file[segment_size];
 
-    if(sendto(sockfd, "-00001", sizeof("-00001"), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
-                    printf("sendto failed.\n");
-                    handle_error("sendto failed");
-                    return -1;
-            }
+
 
     do{
         printf("*******\n");
@@ -235,6 +231,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             
             //printf("Segment stack : \n");
             //stack_print(segments);
+            printf("Sending buffer %s\n", buffer);
             if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                     printf("sendto failed.\n");
                     handle_error("sendto failed");
