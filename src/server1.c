@@ -217,7 +217,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             //printf("Segmented file content : %s\n", segmented_file);
             //printf("Segmented file size : %d\n", strlen(segmented_file));
             //strcat(buffer, segmented_file);
-            memcpy(&buffer[5], segmented_file, segment_size*sizeof(char));
+            memcpy(&buffer[BIT_OFFSET], segmented_file, segment_size*sizeof(char));
             printf("\n \n Sending segment %06d\n", packet_number);
             printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
             // If we received an ACK for previous segment, we start the timer. Else the previous timer is still running.
