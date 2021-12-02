@@ -192,13 +192,13 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             // Add the segment number to the header
             sprintf(buffer, "%06d", packet_number); // 54 -> 000054 
             // Read the file, get the position given by the packet number
-            printf("Reading file at position %d\n", packet_number*segment_size);
+           // printf("Reading file at position %d\n", packet_number*segment_size);
             fseek(file, segment_size*packet_number, SEEK_SET);
-            printf("Fseek done\n");
+           // printf("Fseek done\n");
             int sentB = fread(segmented_file, sizeof(char), segment_size, file);
-            printf("fread done\n");
+           // printf("fread done\n");
             segments->RTT = sentB;
-            printf("adding the size to the segments stack done\n");
+          //  printf("adding the size to the segments stack done\n");
 
             if( sentB< segment_size){
                 // If the file is finished, we send the last segment with the flag EOF
@@ -210,10 +210,10 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             // Concate the header and the file
 
             //print the buffer content and the size of the buffer
-            printf("Buffer content : %s\n", buffer);
-            printf("Buffer size : %d\n", strlen(buffer));
-            printf("Segmented file content : %s\n", segmented_file);
-            printf("Segmented file size : %d\n", strlen(segmented_file));
+            //printf("Buffer content : %s\n", buffer);
+            //printf("Buffer size : %d\n", strlen(buffer));
+            //printf("Segmented file content : %s\n", segmented_file);
+            //printf("Segmented file size : %d\n", strlen(segmented_file));
 
             strcat(buffer, segmented_file);
             printf("\n \n Sending segment %06d\n", packet_number);
@@ -226,8 +226,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
             // Send the segment
             
-            printf("Segment stack : \n");
-            stack_print(segments);
+            //printf("Segment stack : \n");
+            //stack_print(segments);
             if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                     printf("sendto failed.\n");
                     handle_error("sendto failed");
@@ -239,7 +239,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
         // Initialize the select
         FD_SET(sockfd, &readset);
-        printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT)); 
+       // printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT)); 
         tv.tv_usec = DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
         char ack_buffer[16];
         memset(ack_buffer, 0, sizeof(ack_buffer));
