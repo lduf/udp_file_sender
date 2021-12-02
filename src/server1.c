@@ -194,9 +194,11 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             // Read the file, get the position given by the packet number
             printf("Reading file at position %d\n", packet_number*segment_size);
             fseek(file, segment_size*packet_number, SEEK_SET);
-
+            printf("Fseek done\n");
             int sentB = fread(segmented_file, sizeof(char), segment_size, file);
+            printf("fread done\n");
             segments->RTT = sentB;
+            printf("adding the size to the segments stack done\n");
 
             if( sentB< segment_size){
                 // If the file is finished, we send the last segment with the flag EOF
