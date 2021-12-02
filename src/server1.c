@@ -237,6 +237,9 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                     handle_error("sendto failed");
                     return -1;
             }
+            if(flag_eof == 1){
+                break;
+            }
         }
 
         //wait for ACK messages
@@ -269,6 +272,10 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                         acks = stack_push(acks, acked); // We push the ACK number to the stack.
                         acks->RTT= 1000000 * (end - begin) / CLOCKS_PER_SEC; // RTT in microseconds
                         //stack_print(acks);
+                        if(acks->duplicate > MAX_DUPLICATE_ACK){
+                            next_window_size = window_size/2;
+                            break;
+                        }
                        next_window_size = window_size*2;
                     }
                 }
