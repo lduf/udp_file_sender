@@ -128,7 +128,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     FD_ZERO(&readset);
 
     // Initialize time out struct.
-    tv.tv_sec = 10;
+    tv.tv_sec = 0;
     tv.tv_usec = DEFAULT_TIMEOUT;
 
     int timedout = 0; // Flag to check if the select timed out.
