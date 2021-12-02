@@ -161,11 +161,14 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     //clocks
     clock_t begin =0;
     clock_t end = 0;
+    char buffer[DEFAULT_SEGMENT_SIZE];
+    char segmented_file[segment_size];
+
     do{
         printf("*******\n");
-        char buffer[DEFAULT_SEGMENT_SIZE];
-        char segmented_file[segment_size];
-
+         // Clear the buffers
+        memset(buffer, 0, sizeof(buffer));
+        memset(segmented_file, 0, sizeof(segmented_file));
 
         // Check if the file is finished and all trasmitted segments have been received.
         if(acked >= 0 && acked == last_segment_number){
