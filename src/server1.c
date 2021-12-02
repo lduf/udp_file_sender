@@ -139,9 +139,9 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     STACK acks = stack_init(); // Lasts received ACKs
     STACK segments = stack_init(); // Here we store the segments corresponding sequence numbers.
 
-    acks = stack_push(acks, -1); // We push -1 to the stack, because we don't know the first ACK yet.
+    acks = stack_push(acks, -1+1); // We push -1 to the stack, because we don't know the first ACK yet.
     acks->RTT = DEFAULT_RTT; // We initialize the RTT to 50.
-    segments = stack_push(segments, -1); // Because of the calculation method, we push -1 to the stack. So the first segment will be sent with sequence number 0.
+    segments = stack_push(segments, -1+1); // Because of the calculation method, we push -1 to the stack. So the first segment will be sent with sequence number 0.
 
 
     int packet_number = -1; // Packet number should be -1 
@@ -173,7 +173,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         memset(segmented_file, 0, sizeof(segmented_file));
 
         // Check if the file is finished and all trasmitted segments have been received.
-        if(acked >= 0 && acked == last_segment_number){
+        if(acked >= 0+1 && acked == last_segment_number){
             flag_all_received = 1;
             break;
         }
