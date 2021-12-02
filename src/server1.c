@@ -190,7 +190,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             memset(buffer, 0, sizeof(buffer));
             memset(segmented_file, 0, sizeof(segmented_file));
             // Add the segment number to the header
-            sprintf(buffer, "%06d", packet_number);
+            sprintf(buffer, "%06d", packet_number); // 54 -> 000054 
             // Read the file, get the position given by the packet number
             printf("Reading file at position %d\n", packet_number*segment_size);
             fseek(file, segment_size*packet_number, SEEK_SET);
@@ -206,8 +206,15 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 last_segment_number = packet_number;
                 printf("File finished on packet n°%d.\n", last_segment_number);
             }
-
+            // 
             // Concate the header and the file
+
+            //print the buffer content and the size of the buffer
+            printf("Buffer content : %s\n", buffer);
+            printf("Buffer size : %d\n", strlen(buffer));
+            printf("Segmented file content : %s\n", segmented_file);
+            printf("Segmented file size : %d\n", strlen(segmented_file));
+            
             strcat(buffer, segmented_file);
             printf("\n \n Sending segment %06d\n", packet_number);
            // printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
