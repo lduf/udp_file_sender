@@ -161,7 +161,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     //clocks
     clock_t begin =0;
     clock_t end = 0;
-    char buffer[DEFAULT_SEGMENT_SIZE];
+    char buffer[DEFAULT_SEGMENT_SIZE +1];
     char segmented_file[segment_size];
 
 
