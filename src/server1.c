@@ -365,17 +365,21 @@ int main(int argc, char *argv[]) {
 
     //calculate the execution time
     // to store the execution time of code
-    double time_taken = 0.0;
- 
-    clock_t beginD = clock();
+    struct timespec start, finish;
+    double time_taken;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
  
     send_file(new_sockfd, &client_addr, client_addr_len, buffer);
  
-    clock_t endD = clock();
- 
-    // calculate elapsed time by finding difference (end - begin) and
+    clock_gettime(CLOCK_MONOTONIC, &finish);
+
+ // calculate elapsed time by finding difference (end - begin) and
     // dividing the difference by CLOCKS_PER_SEC to convert to seconds
-    time_taken += (double)(endD - beginD) / CLOCKS_PER_SEC;
+    time_taken = (finish.tv_sec - start.tv_sec);
+    time_taken += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+ 
+   
     
     //calculate the throughput
     int file_size = get_file_size(get_file(buffer));
