@@ -1,6 +1,6 @@
 #include "includes/server1.h"
 
-int segment_size = DEFAULT_SEGMENT_SIZE - BIT_OFFSET;
+int segment_size = DEFAULT_SEGMENT_SIZE - (BIT_OFFSET + 1);
 int window_size = DEFAULT_WINDOW_SIZE;
 
 /**
@@ -214,7 +214,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             printf("Buffer size : %d\n", strlen(buffer));
             printf("Segmented file content : %s\n", segmented_file);
             printf("Segmented file size : %d\n", strlen(segmented_file));
-            
+
             strcat(buffer, segmented_file);
             printf("\n \n Sending segment %06d\n", packet_number);
            // printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
