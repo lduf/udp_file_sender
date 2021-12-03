@@ -245,7 +245,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             }
         }
 
-            sleep(1);
+            //sleep(1);
 
         //wait for ACK messages
         int loop_max = window_size;
@@ -292,7 +292,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                     }
                 }
             }
-            sleep(1);
+            //sleep(1);
             window_size = next_window_size;
         }
         
