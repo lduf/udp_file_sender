@@ -210,7 +210,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 flag_eof = 1;
                 last_segment_number = packet_number;
                 printf("File finished on packet n°%d.\n", last_segment_number);
-                break;
             }
             // 
             // Concate the header and the file
@@ -233,7 +232,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             // Send the segment
             
             //printf("Segment stack : \n");
-            //stack_print(segments);
+            stack_print(segments);
             //printf("Sending buffer %s\n", buffer);
             if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                     printf("sendto failed.\n");
@@ -243,6 +242,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             if(flag_eof == 1){
                 break;
             }
+            spleep(2);
         }
 
         //wait for ACK messages
@@ -276,7 +276,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                         //printf("ACK %d\n", acked);
                         acks = stack_push(acks, acked); // We push the ACK number to the stack.
                         acks->RTT= 1000000 * (end - begin) / CLOCKS_PER_SEC; // RTT in microseconds
-                        //stack_print(acks);
+                        stack_print(acks);
                         if(acks->duplicate > MAX_DUPLICATE_ACK){
                             next_window_size = DEFAULT_WINDOW_SIZE;
                             flag_duplicated_ack = 1;
