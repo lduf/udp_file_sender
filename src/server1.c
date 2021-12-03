@@ -305,7 +305,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             //window_size = next_window_size;
         }
         
-        window_size = new_window_size(segments, acks, ((nb_positives_acks == loop_max) ? nb_positives_acks : 0))); 
+        window_size = new_window_size(segments, acks, ((nb_positives_acks == loop_max) ? nb_positives_acks : 0)); 
      
         
     }while(flag_eof == 0 || flag_all_received == 0); // We send the file until we reach the end of the file AND until we receive an ACK for the last sent packet.
