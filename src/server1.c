@@ -250,10 +250,10 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             next_window_size = window_size;
             // Initialize the select
             FD_SET(sockfd, &readset);
-            printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT)); 
-            struct timeval tv;
+            printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
             tv.tv_sec = 0;
             tv.tv_usec = DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
+            //handle_error("select failed");
             char ack_buffer[16];
             memset(ack_buffer, 0, sizeof(ack_buffer));
 
