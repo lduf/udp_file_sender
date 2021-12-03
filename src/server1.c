@@ -243,10 +243,12 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             }
             if(flag_eof == 1){
                 printf("Sending EOF : BREAKKKKKKK   ING NEWS\n");
+                flag_all_received = 1;
                 break;
             }
         }
-
+        //printf("Sending buffer %s\n", buffer);
+        break;
             //sleep(1);
 
         //wait for ACK messages
