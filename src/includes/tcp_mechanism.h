@@ -13,3 +13,8 @@
 #define FAST_RECOVERY_MOD 1
 int next_seq_to_send(STACK acks, STACK segs, int timedout, int eof);
 int estimate_timeout(double rtt);
+void slow_start(int positive_ack);
+void congestion_avoidance() ;
+void fast_retransmit() ;
+void fast_recovery();
+int new_window_size(STACK segs, STACK acks, int positive_ack);
