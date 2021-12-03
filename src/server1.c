@@ -221,7 +221,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             //printf("Segmented file size : %d\n", strlen(segmented_file));
             //strcat(buffer, segmented_file);
             memcpy(&buffer[BIT_OFFSET], segmented_file, segment_size*sizeof(char));
-            printf("Sending segment %06d\n", packet_number);
+           // printf("Sending segment %06d\n", packet_number);
            // printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
             // If we received an ACK for previous segment, we start the timer. Else the previous timer is still running.
             if(timedout == 0){
@@ -250,7 +250,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             next_window_size = window_size;
             // Initialize the select
             FD_SET(sockfd, &readset);
-            printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
+            //printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
             tv.tv_sec = 0;
             tv.tv_usec = 1*estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
             //handle_error("select failed");
@@ -259,7 +259,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
             if (select(sockfd+1, &readset, NULL, NULL, &tv)== 0){
                 // If the select timed out, raise the timedout flag so the segment will be resend.
-                printf("TIMEOUT for packet %d !\n", packet_number);
+                //printf("TIMEOUT for packet %d !\n", packet_number);
                 timedout = 1;
                 next_window_size = ((int) window_size/2 > 1) ? (int) window_size/2 : 1;
             }
@@ -272,10 +272,10 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                     end = clock(); // We stop the timer.
                     if (compareString(ack_buffer, "ACK[0-9]{6}")){
                         acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1)); //get the ACK number
-                        printf("ACK %d\n", acked);
+                        //printf("ACK %d\n", acked);
                         acks = stack_push(acks, acked); // We push the ACK number to the stack.
                         acks->RTT= 1000000 * (end - begin) / CLOCKS_PER_SEC; // RTT in microseconds
-                        stack_print(acks);
+                        //stack_print(acks);
                         if(acks->duplicate > MAX_DUPLICATE_ACK){
                             next_window_size = DEFAULT_WINDOW_SIZE;
                             flag_duplicated_ack = 1;
