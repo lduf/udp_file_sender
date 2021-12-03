@@ -242,7 +242,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             if(flag_eof == 1){
                 break;
             }
-            spleep(2);
+            sleep(2);
         }
 
         //wait for ACK messages
