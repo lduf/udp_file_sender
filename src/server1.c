@@ -248,7 +248,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             }
         }
         //printf("Sending buffer %s\n", buffer);
-        break;
             //sleep(1);
 
         //wait for ACK messages
