@@ -169,7 +169,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
 
     do{
-        //printf("*******\n");
+        printf("\n*******\n");
          // Clear the buffers
         memset(buffer, 0, sizeof(buffer));
         memset(segmented_file, 0, sizeof(segmented_file));
@@ -181,6 +181,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             break;
         }
         
+        printf("Window size : %d\n", next_window_size);
         
         //  packet_number = next_seq_to_send(acks, segments);
         // Windows congestion. If the window is full, wait for the client to send an ACK.
@@ -242,9 +243,10 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             if(flag_eof == 1){
                 break;
             }
-            sleep(2);
         }
 
+            sleep(1);
+            
         //wait for ACK messages
         for (int i = 0; i < window_size && flag_all_received == 0 && flag_duplicated_ack == 0; i++)
         {
@@ -289,6 +291,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                     }
                 }
             }
+            sleep(1);
         }
         window_size = next_window_size;
      
