@@ -63,12 +63,11 @@ int estimate_timeout(double rtt) {
 /**
  * @brief This function is used to implement the slow start mechanism.
  * 
- * @param segs The stack of segments
- * @param acks The stack of acks
- * 
+ * @param int positive_ack
  * @return void The number of segments to send
  */
-void slow_start() {
+void slow_start(int positive_ack) {
+    if(positive_ack > 0) 
         cwnd = cwnd *2;
 }
 
@@ -117,13 +116,14 @@ void fast_recovery() {
  * 
  * @param stack segs 
  * @param stack acks
+ * @param int positive_ack : the number of positive ACKs received, 0 if all ACK are received
  *
  * @return int Window size
  */
- int new_window_size(STACK segs, STACK acks){
+ int new_window_size(STACK segs, STACK acks, int positive_ack) {
      
      if (swnd < ssthresh){
-         slow_start();
+         slow_start(positive_ack);
      } 
      if (acks->duplicate > MAX_DUPLICATE_ACK && cwnd > ssthresh) {
          fast_retransmit();

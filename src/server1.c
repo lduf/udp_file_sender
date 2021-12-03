@@ -255,9 +255,10 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
         //wait for ACK messages
         int loop_max = window_size;
+        int nb_positives_acks = 0;
         for (int i = 0; i < loop_max && flag_all_received == 0 && flag_duplicated_ack == 0; i++)
         {
-            next_window_size = window_size;
+            //next_window_size = window_size;
             // Initialize the select
             FD_SET(sockfd, &readset);
             //printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
@@ -271,7 +272,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 // If the select timed out, raise the timedout flag so the segment will be resend.
                 //printf("TIMEOUT for packet %d !\n", packet_number);
                 timedout = 1;
-                next_window_size = ((int) window_size/2 > DEFAULT_WINDOW_SIZE) ? (int) window_size/2 : DEFAULT_WINDOW_SIZE;
+               // next_window_size = ((int) window_size/2 > DEFAULT_WINDOW_SIZE) ? (int) window_size/2 : DEFAULT_WINDOW_SIZE;
                 break;
             }
             else{
@@ -286,23 +287,25 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                         //printf("ACK %d\n", acked);
                         acks = stack_push(acks, acked); // We push the ACK number to the stack.
                         acks->RTT= 1000000 * (end - begin) / CLOCKS_PER_SEC; // RTT in microseconds
+                        nb_positives_acks++;
                       //  printf("Acks stack\n");
                        // stack_print(acks);
                         if(acks->duplicate > MAX_DUPLICATE_ACK){
-                            next_window_size = ((int) window_size/2 > DEFAULT_WINDOW_SIZE) ? (int) window_size/2 : DEFAULT_WINDOW_SIZE;//voir pour fast recovery : stocker la dernière valeur de fenetre et la reprendre/2
+                          //  next_window_size = ((int) window_size/2 > DEFAULT_WINDOW_SIZE) ? (int) window_size/2 : DEFAULT_WINDOW_SIZE;//voir pour fast recovery : stocker la dernière valeur de fenetre et la reprendre/2
                             flag_duplicated_ack = 1;
                         }
                         else{
-                            next_window_size = window_size+1; //slow start : on augmente la taille de la fenetre dès qu'on recoit un ack
+                          //  next_window_size = window_size+1; //slow start : on augmente la taille de la fenetre dès qu'on recoit un ack
                         }
                        
                     }
                 }
             }
             //sleep(1);
-            window_size = next_window_size;
+            //window_size = next_window_size;
         }
         
+        window_size = new_window_size(segments, acks, ((nb_positives_acks == loop_max) ? nb_positives_acks : 0))); 
      
         
     }while(flag_eof == 0 || flag_all_received == 0); // We send the file until we reach the end of the file AND until we receive an ACK for the last sent packet.
