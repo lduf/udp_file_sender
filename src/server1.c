@@ -242,6 +242,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                     return -1;
             }
             if(flag_eof == 1){
+                printf("Sending EOF : BREAKKKKKKK   ING NEWS\n");
                 break;
             }
         }
