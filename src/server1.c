@@ -246,7 +246,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             if(flag_eof == 1){
                 printf("Sending EOF : BREAKKKKKKK   ING NEWS\n");
                // flag_all_received = 1;
-               window_size = (i == 0) ? i+1 : i;
+               window_size = i + 1;
                 break;
             }
         }
@@ -271,7 +271,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 // If the select timed out, raise the timedout flag so the segment will be resend.
                 //printf("TIMEOUT for packet %d !\n", packet_number);
                 timedout = 1;
-                next_window_size = ((int) window_size - 1 > 1) ? (int) window_size - 1 : 1;
+                next_window_size = ((int) window_size - 1 > DEFAULT_WINDOW_SIZE) ? (int) window_size - 1 : DEFAULT_WINDOW_SIZE;
             }
             else{
                 //printf("Received ACK on packet %d\n", packet_number);
@@ -288,7 +288,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                       //  printf("Acks stack\n");
                        // stack_print(acks);
                         if(acks->duplicate > MAX_DUPLICATE_ACK){
-                            next_window_size = DEFAULT_WINDOW_SIZE;
+                            next_window_size = DEFAULT_WINDOW_SIZE;//voir pour fast recovery : stocker la dernière valeur de fenetre et la reprendre/2
                             flag_duplicated_ack = 1;
                         }
                         else{
