@@ -246,7 +246,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         }
 
             sleep(1);
-            
+
         //wait for ACK messages
         for (int i = 0; i < window_size && flag_all_received == 0 && flag_duplicated_ack == 0; i++)
         {
@@ -292,8 +292,9 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 }
             }
             sleep(1);
+            window_size = next_window_size;
         }
-        window_size = next_window_size;
+        
      
         
     }while(flag_eof == 0 || flag_all_received == 0); // We send the file until we reach the end of the file AND until we receive an ACK for the last sent packet.
