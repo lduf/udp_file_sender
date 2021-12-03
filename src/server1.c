@@ -210,7 +210,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             if( sentB< segment_size){
                 // If the file is finished, we send the last segment with the flag EOF
                 flag_eof = 1;
-                handle_error("File finished");
                 last_segment_number = packet_number;
                 printf("File finished on packet n°%d.\n", last_segment_number);
             }
@@ -261,7 +260,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             FD_SET(sockfd, &readset);
             //printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
             tv.tv_sec = 0;
-            tv.tv_usec = estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
+            tv.tv_usec = 2.5*estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
             //handle_error("select failed");
             char ack_buffer[16];
             memset(ack_buffer, 0, sizeof(ack_buffer));
