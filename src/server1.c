@@ -181,13 +181,13 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             break;
         }
         
-        printf("Window size : %d\n", window_size);
+        //printf("Window size : %d\n", window_size);
         
         //  packet_number = next_seq_to_send(acks, segments);
         // Windows congestion. If the window is full, wait for the client to send an ACK.
         for (int i = 0; i < window_size && flag_all_received == 0; i++)
         {
-            printf("Envoie de %d sur ma fenêtre de %d\n", i, window_size);
+            //printf("Envoie de %d sur ma fenêtre de %d\n", i, window_size);
             //Get the next packet number to send. If timeout, send the last packet again.
             packet_number = next_seq_to_send(acks, segments, timedout, flag_eof);
             //Here we add the previous packet number to the sent segments stack.
@@ -235,8 +235,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
             // Send the segment
             
-            printf("Segment stack : \n");
-            stack_print(segments);
+            //printf("Segment stack : \n");
+            //stack_print(segments);
             //printf("Sending buffer %s\n", buffer);
             if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                     printf("sendto failed.\n");
@@ -269,7 +269,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
             if (select(sockfd+1, &readset, NULL, NULL, &tv)== 0){
                 // If the select timed out, raise the timedout flag so the segment will be resend.
-                printf("TIMEOUT for packet %d !\n", packet_number);
+                //printf("TIMEOUT for packet %d !\n", packet_number);
                 timedout = 1;
                 next_window_size = ((int) window_size - 1 > 1) ? (int) window_size - 1 : 1;
             }
@@ -285,8 +285,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                         //printf("ACK %d\n", acked);
                         acks = stack_push(acks, acked); // We push the ACK number to the stack.
                         acks->RTT= 1000000 * (end - begin) / CLOCKS_PER_SEC; // RTT in microseconds
-                        printf("Acks stack\n");
-                        stack_print(acks);
+                      //  printf("Acks stack\n");
+                       // stack_print(acks);
                         if(acks->duplicate > MAX_DUPLICATE_ACK){
                             next_window_size = DEFAULT_WINDOW_SIZE;
                             flag_duplicated_ack = 1;
