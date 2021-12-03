@@ -289,7 +289,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                       //  printf("Acks stack\n");
                        // stack_print(acks);
                         if(acks->duplicate > MAX_DUPLICATE_ACK){
-                            next_window_size = DEFAULT_WINDOW_SIZE;//voir pour fast recovery : stocker la dernière valeur de fenetre et la reprendre/2
+                            next_window_size = ((int) window_size/2 > DEFAULT_WINDOW_SIZE) ? (int) window_size/2 : DEFAULT_WINDOW_SIZE;//voir pour fast recovery : stocker la dernière valeur de fenetre et la reprendre/2
                             flag_duplicated_ack = 1;
                         }
                         else{
