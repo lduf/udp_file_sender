@@ -193,6 +193,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             //Here we add the previous packet number to the sent segments stack.
             segments = stack_push(segments, packet_number);
 
+            flag_eof = 0;
             // Clear the buffers
             memset(buffer, 0, sizeof(buffer));
             memset(segmented_file, 0, sizeof(segmented_file));
