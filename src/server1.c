@@ -231,7 +231,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
             // Send the segment
             
-            //printf("Segment stack : \n");
+            printf("Segment stack : \n");
             stack_print(segments);
             //printf("Sending buffer %s\n", buffer);
             if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
@@ -276,6 +276,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                         //printf("ACK %d\n", acked);
                         acks = stack_push(acks, acked); // We push the ACK number to the stack.
                         acks->RTT= 1000000 * (end - begin) / CLOCKS_PER_SEC; // RTT in microseconds
+                        printf("Acks stack\n");
                         stack_print(acks);
                         if(acks->duplicate > MAX_DUPLICATE_ACK){
                             next_window_size = DEFAULT_WINDOW_SIZE;
