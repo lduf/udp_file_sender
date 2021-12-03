@@ -281,7 +281,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                             flag_duplicated_ack = 1;
                         }
                         else{
-                            next_window_size = window_size+1;
+                            next_window_size = window_size+1; //slow start : on augmente la taille de la fenetre dès qu'on recoit un ack
                         }
                        
                     }
