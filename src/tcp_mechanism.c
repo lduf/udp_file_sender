@@ -135,6 +135,6 @@ void fast_recovery() {
          fast_recovery();
      }
     
-     swnd = min(cwnd, awnd);
+     swnd = cwnd;//min(cwnd, awnd);
      return swnd;
  }
