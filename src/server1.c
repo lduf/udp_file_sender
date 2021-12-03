@@ -261,7 +261,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 // If the select timed out, raise the timedout flag so the segment will be resend.
                 printf("TIMEOUT for packet %d !\n", packet_number);
                 timedout = 1;
-                next_window_size = window_size/2;
+                next_window_size = ((int) window_size/2 > 1) ? (int) window_size/2 : 1;
             }
             else{
                 //printf("Received ACK on packet %d\n", packet_number);
