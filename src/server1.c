@@ -258,14 +258,14 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             FD_SET(sockfd, &readset);
             //printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
             tv.tv_sec = 0;
-            tv.tv_usec = 1*estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
+            tv.tv_usec = 3*estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
             //handle_error("select failed");
             char ack_buffer[16];
             memset(ack_buffer, 0, sizeof(ack_buffer));
 
             if (select(sockfd+1, &readset, NULL, NULL, &tv)== 0){
                 // If the select timed out, raise the timedout flag so the segment will be resend.
-                //printf("TIMEOUT for packet %d !\n", packet_number);
+                printf("TIMEOUT for packet %d !\n", packet_number);
                 timedout = 1;
                 next_window_size = ((int) window_size/2 > 1) ? (int) window_size/2 : 1;
             }
