@@ -10,14 +10,19 @@ double devRtt = 100;
  * 
  * @return int The next sequence number to send
  */
-int next_seq_to_send(STACK acks, STACK segs, int timedout) {
+int next_seq_to_send(STACK acks, STACK segs, int timedout, int eof) {
 
-    if(timedout == 1) {
-        return segs->element +1 ;
-    }
+    
 
     int last_ack = acks->element;
     int last_seg = segs->element;
+
+    if(eof == 1) {
+        return last_ack+1;
+    }
+    if(timedout == 1) {
+        return last_seg +1 ;
+    }
 
     if (acks->duplicate > MAX_DUPLICATE_ACK) {
        // printf("Too many duplicate ACKs, sending back the segment n° %d...\n", last_ack+1);
