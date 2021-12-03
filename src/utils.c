@@ -23,7 +23,17 @@ char * error_msg[] = {
 regex_t re;
 
 
-
+/**
+ * @brief This function returns the minimum of two numbers
+ * 
+ * @param a
+ * @param b
+ * 
+ * @return int
+ */
+int min(int a, int b) {
+    return (a < b) ? a : b;
+}
 
 /**
  * @brief This function generates a random int between the specified min and the specified max.

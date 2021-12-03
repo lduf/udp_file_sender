@@ -83,3 +83,4 @@ int compareString(char string[], char rgx[]);
 int random_int(int min, int max);
 char* extractSubstring(char string[], char rgx[], int n);
 char* extract(char * src_str, const char * srch_regex, int n);
+int min(int a, int b);
