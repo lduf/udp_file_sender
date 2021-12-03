@@ -13,7 +13,7 @@ double devRtt = 100;
 int next_seq_to_send(STACK acks, STACK segs, int timedout) {
 
     if(timedout == 1) {
-        return segs->element +1 ;
+        return segs->element +0 ;
     }
 
     int last_ack = acks->element;
