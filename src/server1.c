@@ -212,7 +212,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 flag_eof = 1;
                 last_segment_number = packet_number;
                 printf("File finished on packet n°%d.\n", last_segment_number);
-                handle_error("File finished");
+                //handle_error("File finished");
             }
             // 
             // Concate the header and the file
