@@ -253,7 +253,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         // printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT)); 
             struct timeval tv;
             tv.tv_sec = 0;
-            tv.tv_usec = estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
+            tv.tv_usec = DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
             char ack_buffer[16];
             memset(ack_buffer, 0, sizeof(ack_buffer));
 
