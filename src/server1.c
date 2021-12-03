@@ -250,7 +250,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             next_window_size = window_size;
             // Initialize the select
             FD_SET(sockfd, &readset);
-        // printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT)); 
+            printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT)); 
             struct timeval tv;
             tv.tv_sec = 0;
             tv.tv_usec = DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
@@ -275,7 +275,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                         printf("ACK %d\n", acked);
                         acks = stack_push(acks, acked); // We push the ACK number to the stack.
                         acks->RTT= 1000000 * (end - begin) / CLOCKS_PER_SEC; // RTT in microseconds
-                        //stack_print(acks);
+                        stack_print(acks);
                         if(acks->duplicate > MAX_DUPLICATE_ACK){
                             next_window_size = DEFAULT_WINDOW_SIZE;
                             flag_duplicated_ack = 1;
