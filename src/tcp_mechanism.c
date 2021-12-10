@@ -33,7 +33,7 @@ int next_seq_to_send(STACK acks, STACK segs, int timedout, int eof) {
         return last_seg +1 ; //last_seg +1 ; //what if ACK + 1 ? -> perf -- 
     }
 
-    if (acks->duplicate > MAX_DUPLICATE_ACK) {
+    if (acks->duplicate > MAX_DUPLICATE_ACK && last_seg != last_ack +1) {
        // printf("Too many duplicate ACKs, sending back the segment n° %d...\n", last_ack+1);
         return last_ack + 1;
     } else {
