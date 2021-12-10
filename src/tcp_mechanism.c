@@ -7,7 +7,7 @@ double devRtt = 100;
 int swnd = 1; // fenêtre d'émission
 int awnd = 1; // fenêtre de réception
 int cwnd = DEFAULT_CWND; // fenêtre de congestion
-int ssthresh = 128; // seuil de congestion slow start
+int ssthresh = 1024; // seuil de congestion slow start
 int FAST_RETRANSMIT_MOD = 0; //mode fast retransmit
 
 
