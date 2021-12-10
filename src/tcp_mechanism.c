@@ -124,10 +124,10 @@ void fast_recovery() {
      if (swnd < ssthresh){
          slow_start(positive_ack);
      } 
-     if (acks->duplicate > MAX_DUPLICATE_ACK && cwnd > ssthresh) {
+     if (acks->duplicate > MAX_DUPLICATE_ACK && cwnd >= ssthresh) {
          fast_retransmit();
      } 
-     if (cwnd > ssthresh) {
+     if (cwnd >= ssthresh) {
          congestion_avoidance();
      }  
      if (FAST_RECOVERY_MOD == 1) {
