@@ -286,7 +286,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                         acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1)); //get the ACK number
                         //printf("ACK %d\n", acked);
                         acks = stack_push(acks, acked); // We push the ACK number to the stack.
-                        acks->RTT= 2*1000000 * (end - begin) / ((int)(i+1)*CLOCKS_PER_SEC); // RTT in microseconds
+                        acks->RTT= 1000000 * (end - begin) / CLOCKS_PER_SEC; // RTT in microseconds
                         nb_positives_acks++;
                         printf("Acks stack\n");
                         stack_print(acks);
