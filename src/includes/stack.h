@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "stack_type.h"
-#define MAX_STACK_SIZE 5
+#define MAX_STACK_SIZE 3
 
 STACK stack_init();
 STACK stack_push(STACK stack, int element);

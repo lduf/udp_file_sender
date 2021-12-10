@@ -32,16 +32,7 @@ STACK stack_push(STACK stack, int element) {
             duplicate = duplicate + 1;
         }
     }
-    /*
-    while(stack != NULL) {
-        if(stack->element == element) {
-            duplicate++;
-        }
-        stack = stack->next;
-        i++;
-    }
-    */
-    
+        
     new_stack->duplicate = duplicate;
     if(stack_size(new_stack) >= MAX_STACK_SIZE) {
         new_stack = stack_pop_last(new_stack);
