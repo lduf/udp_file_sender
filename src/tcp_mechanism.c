@@ -81,7 +81,7 @@ void congestion_avoidance() {
     //CHECK IF FRT
     if(FAST_RETRANSMIT_MOD == 1){
         ssthresh = cwnd;
-        cwnd = (cwnd/2 > 1) ? cwnd/2 : 1;
+        cwnd = (cwnd/2 > DEFAULT_CWND) ? cwnd/2 : DEFAULT_CWND;
         FAST_RETRANSMIT_MOD = 0;
     }
 }
@@ -94,7 +94,7 @@ void congestion_avoidance() {
 */
 void fast_retransmit() {
     FAST_RETRANSMIT_MOD = 1;
-    cwnd = 1;
+    cwnd = DEFAULT_CWND;
 }
 
 /**
