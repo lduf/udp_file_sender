@@ -29,7 +29,7 @@ STACK stack_push(STACK stack, int element) {
 
     int i = 0;
     if(stack->element == element) {
-         new_stack->duplicate = stack->duplicate + 1;
+        duplicate ++;
     }
     /*
     while(stack != NULL) {
