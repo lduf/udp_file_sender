@@ -273,7 +273,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 printf("TIMEOUT for packet %d !\n", packet_number);
                 timedout = 1;
                // next_window_size = ((int) window_size/2 > DEFAULT_WINDOW_SIZE) ? (int) window_size/2 : DEFAULT_WINDOW_SIZE;
-               // break;
+               break;
             }
             else{
                 //printf("Received ACK on packet %d\n", packet_number);
