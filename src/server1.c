@@ -187,7 +187,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         // Windows congestion. If the window is full, wait for the client to send an ACK.
         for (int i = 0; i < window_size && flag_all_received == 0; i++)
         {
-            //printf("Envoie de %d sur ma fenêtre de %d\n", i, window_size);
+            printf("Envoie de %d sur ma fenêtre de %d\n", i, window_size);
             //Get the next packet number to send. If timeout, send the last packet again.
             packet_number = next_seq_to_send(acks, segments, timedout, flag_eof);
             //Here we add the previous packet number to the sent segments stack.
@@ -225,7 +225,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             //printf("Segmented file size : %d\n", strlen(segmented_file));
             //strcat(buffer, segmented_file);
             memcpy(&buffer[BIT_OFFSET], segmented_file, segment_size*sizeof(char));
-           // printf("Sending segment %06d\n", packet_number);
+            printf("Sending segment %06d\n", packet_number);
            // printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
             // If we received an ACK for previous segment, we start the timer. Else the previous timer is still running.
             if(timedout == 0){
@@ -261,7 +261,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             //next_window_size = window_size;
             // Initialize the select
             FD_SET(sockfd, &readset);
-            //printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
+            printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
             tv.tv_sec = 0;
             tv.tv_usec = 1*estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
             //handle_error("select failed");
@@ -301,7 +301,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                     }
                 }
             }
-            //sleep(1);
+            sleep(1);
             //window_size = next_window_size;
         }
         
