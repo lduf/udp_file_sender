@@ -122,7 +122,6 @@ void fast_recovery() {
  * @return int Window size
  */
  int new_window_size(STACK segs, STACK acks, int positive_ack) {
-     return 8;
      if (swnd < ssthresh){
          slow_start(positive_ack);
      } 
