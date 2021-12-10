@@ -79,9 +79,9 @@ void congestion_avoidance() {
     cwnd = cwnd + 1;
 
     //CHECK IF FRT
-    if(FAST_RETRANSMIT_MOD){
+    if(FAST_RETRANSMIT_MOD == 1){
         ssthresh = cwnd;
-        cwnd = (cwnd/2 > 1) ? cwnd/2 : 1;
+        cwnd = 1; //(cwnd/2 > 1) ? cwnd/2 : 1;
         FAST_RETRANSMIT_MOD = 0;
     }
 }
