@@ -94,6 +94,7 @@ void congestion_avoidance() {
 */
 void fast_retransmit() {
     FAST_RETRANSMIT_MOD = 1;
+    cwnd = 1;
 }
 
 /**
