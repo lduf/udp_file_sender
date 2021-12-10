@@ -304,7 +304,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             
             //window_size = next_window_size;
         }
-        sleep(3);
+       // sleep(3);
         window_size = new_window_size(segments, acks, ((nb_positives_acks == loop_max) ? nb_positives_acks : 0)); 
      
         
