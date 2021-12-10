@@ -25,11 +25,11 @@ STACK stack_push(STACK stack, int element) {
     new_stack->element = element;
     new_stack->next = stack;
     
-    int duplicate = 0;
-
+    
+    int duplicate = stack->duplicate;
     int i = 0;
     if(stack->element == element) {
-        duplicate ++;
+        duplicate = duplicate + 1;
     }
     /*
     while(stack != NULL) {
