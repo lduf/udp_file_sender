@@ -27,8 +27,8 @@ STACK stack_push(STACK stack, int element) {
     
     int duplicate = 0;
     if(stack != NULL) {
-        duplicate = stack->duplicate;
         if(stack->element == element) {
+            duplicate = stack->duplicate;
             duplicate = duplicate + 1;
         }
     }
