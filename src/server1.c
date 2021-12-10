@@ -256,7 +256,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         //wait for ACK messages
         int loop_max = window_size;
         int nb_positives_acks = 0;
-        for (int i = 0; i < loop_max && flag_all_received == 0 && flag_duplicated_ack == 0; i++)
+        for (int i = 0; i < loop_max && flag_all_received == 0 ; i++) //&& flag_duplicated_ack == 0
         {
             //next_window_size = window_size;
             // Initialize the select
