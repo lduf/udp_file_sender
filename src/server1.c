@@ -263,7 +263,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             FD_SET(sockfd, &readset);
             printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
             tv.tv_sec = 0;
-            tv.tv_usec = 4*estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
+            tv.tv_usec = 2*estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
             //handle_error("select failed");
             char ack_buffer[16];
             memset(ack_buffer, 0, sizeof(ack_buffer));
@@ -283,10 +283,14 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 else{
                     end = clock(); // We stop the timer.
                     if (compareString(ack_buffer, "ACK[0-9]{6}")){
+                        int RTT = 0;
+                        if(i ==0){
+                            RTT = 1000000 * (end - begin) / CLOCKS_PER_SEC;
+                        }
                         acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1)); //get the ACK number
                         //printf("ACK %d\n", acked);
                         acks = stack_push(acks, acked); // We push the ACK number to the stack.
-                        acks->RTT= 1000000 * (end - begin) / ((i+1)*CLOCKS_PER_SEC); // RTT in microseconds
+                        acks->RTT= RTT; // RTT in microseconds
                         nb_positives_acks++;
                         printf("Acks stack\n");
                         stack_print(acks);
