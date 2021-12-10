@@ -28,6 +28,10 @@ STACK stack_push(STACK stack, int element) {
     int duplicate = 0;
 
     int i = 0;
+    if(stack->element == element) {
+         new_stack->duplicate = stack->duplicate + 1;
+    }
+    /*
     while(stack != NULL) {
         if(stack->element == element) {
             duplicate++;
@@ -35,6 +39,7 @@ STACK stack_push(STACK stack, int element) {
         stack = stack->next;
         i++;
     }
+    */
     
     new_stack->duplicate = duplicate;
     if(stack_size(new_stack) >= MAX_STACK_SIZE) {
