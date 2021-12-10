@@ -81,7 +81,7 @@ void congestion_avoidance() {
     //CHECK IF FRT
     if(FAST_RETRANSMIT_MOD == 1){
         ssthresh = cwnd;
-        cwnd = 1; //(cwnd/2 > 1) ? cwnd/2 : 1;
+        cwnd = (cwnd/2 > 1) ? cwnd/2 : 1;
         FAST_RETRANSMIT_MOD = 0;
     }
 }
@@ -122,6 +122,7 @@ void fast_recovery() {
  * @return int Window size
  */
  int new_window_size(STACK segs, STACK acks, int positive_ack) {
+     return 8;
      if (swnd < ssthresh){
          slow_start(positive_ack);
      } 
