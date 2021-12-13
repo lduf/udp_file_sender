@@ -226,10 +226,10 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
        //     printf("Sending segment %06d\n", packet_number);
            // printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
             // If we received an ACK for previous segment, we start the timer. Else the previous timer is still running.
-            if(timedout == 0){
-                clock_gettime(CLOCK_MONOTONIC, &begin_timeouts[i]);
+            //if(timedout == 0){
+                clock_gettime(CLOCK_REALTIME, &begin_timeouts[i]);
                 //begin = clock();
-            }
+           // }
             timedout = 0;
 
             // Send the segment
@@ -285,7 +285,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                         int RTT = 0;
                         //if(i == 0){
                             struct timespec end_time;
-                            clock_gettime(CLOCK_MONOTONIC, &end_time);
+                            clock_gettime(CLOCK_REALTIME, &end_time);
                             RTT = (end_time.tv_sec - begin_timeouts[i].tv_sec)*1000000 + (end_time.tv_nsec - begin_timeouts[i].tv_nsec)/1000;
                             printf("RTT : %d us\n", RTT);
                             printf("Start time for element %d : %ld.%ld\n Stop time : %ld.%ld \n", i, begin_timeouts[i].tv_sec, begin_timeouts[i].tv_nsec, end_time.tv_sec, end_time.tv_nsec);
