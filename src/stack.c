@@ -36,7 +36,7 @@ STACK stack_push(STACK stack, int element) {
     int resent_packet = element;
     int resent_duplicate = 0;
     while(stack != NULL) {
-        if(stack->mode == 'A' && stack->element > resent_packet) {
+        if(stack->mode == "A" && stack->element > resent_packet) {
             resent_packet = stack->element;
             printf("NOOOOOOOOOOOOOOOT HIGHER PACKET resent packet: %d\n", resent_packet);
             resent_duplicate = stack->duplicate;
