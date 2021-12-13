@@ -65,7 +65,7 @@ int estimate_timeout(double rtt) {
     sRtt = (1 - ALPHA) * sRtt + ALPHA*rtt;
     devRtt = (1 - BETA) * devRtt + BETA * fabs(rtt - sRtt);
     //printf("Estimated RTT: %f us\n", sRtt);
-    return (int) 0.8*(sRtt + 4 * devRtt);
+    return (int) sRtt + 4 * devRtt);
 }
 
 /**
