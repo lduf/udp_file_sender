@@ -33,15 +33,27 @@ STACK stack_push(STACK stack, int element) {
     //     }
     // }
     int i = 0;
+    int resent_packet = 0;
+    int resent_duplicate = 0;
     while(stack != NULL) {
+        if(stack->element > element) {
+            resent_packet = stack->element;
+            resent_duplicate = stack->duplicate;
+        }
         if(stack->element == element) {
             duplicate++;
         }
         stack = stack->next;
         i++;
     }
-
-    new_stack->duplicate = duplicate;
+    if(resent_packet != 0) {
+        new_stack->element = resent_packet;
+        new_stack->duplicate = resent_duplicate;
+    }
+    else{
+        new_stack->duplicate = duplicate;
+    }
+    
     if(stack_size(new_stack) >= MAX_STACK_SIZE) {
         new_stack = stack_pop_last(new_stack);
     }
