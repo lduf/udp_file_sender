@@ -65,7 +65,7 @@ int estimate_timeout(double rtt) {
     sRtt = (1 - ALPHA) * sRtt + ALPHA*rtt;
     devRtt = (1 - BETA) * devRtt + BETA * fabs(rtt - sRtt);
     //printf("Estimated RTT: %f us\n", sRtt);
-    return (int) (sRtt + 4 * devRtt);
+    return (int) 0.8*(sRtt + 4 * devRtt);
 }
 
 /**
@@ -113,7 +113,7 @@ void fast_retransmit() {
  */
 void fast_recovery() {
     if(FAST_RECOVERY_MOD == 1){
-       // cwnd = (fast_rt_window / 2 >= DEFAULT_CWND) ? fast_rt_window / 2 : DEFAULT_CWND;
+       cwnd = (fast_rt_window / 2 >= DEFAULT_CWND) ? fast_rt_window / 2 : DEFAULT_CWND;
     }
     else{
         cwnd = DEFAULT_CWND;
