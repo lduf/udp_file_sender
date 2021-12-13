@@ -287,11 +287,10 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                             struct timespec end_time;
                             clock_gettime(CLOCK_REALTIME, &end_time);
                             int duree_emition = (int) ((begin_timeouts[loop_max].tv_sec*100000 + begin_timeouts[loop_max].tv_nsec/1000) - (begin_timeouts[i].tv_sec*100000 + begin_timeouts[i].tv_nsec/1000)); // durée d'emission des paquets en us
-                            long long int start_time_us = (long long int ) ((begin_timeouts[i].tv_sec*100000 + begin_timeouts[i].tv_nsec/1000));
-                            long long int  end_time_us = (long long int ) ((end_time.tv_sec*100000 + end_time.tv_nsec/1000));
-                            RTT = end_time_us - start_time_us - duree_emition; 
+                            int time_taken = (int) ((begin_timeouts[i].tv_sec*100000 + begin_timeouts[i].tv_nsec/1000)) - ((end_time.tv_sec*100000 + end_time.tv_nsec/1000));
+                            RTT = time_taken - duree_emition; 
                             printf("RTT : %d us\n", RTT);
-                            printf("Start time for element %d : %lld\n Stop time : %lld \n", i, start_time_us, end_time_us);
+                            printf("Start time for element %d : %d\n durée émission : %d \n", i, time_taken, duree_emition);
                             //RTT = 1000000 * (end - begin) / CLOCKS_PER_SEC;
                         //}
                         acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1)); //get the ACK number
