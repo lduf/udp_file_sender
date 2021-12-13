@@ -287,8 +287,9 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                             struct timespec end_time;
                             clock_gettime(CLOCK_MONOTONIC, &end_time);
 
-                            //RTT = (end_time.tv_sec - begin_timeouts[i].tv_sec);
-                            RTT = (end_time.tv_nsec - begin_timeouts[i].tv_nsec) / 1000000000.0;
+                            RTT = (end_time.tv_sec - begin_timeouts[i].tv_sec);
+                            RTT += (end_time.tv_nsec - begin_timeouts[i].tv_nsec) / 1000000000.0;
+                            RTT = RTT * 1000000;
                             //RTT = 1000000 * (end - begin) / CLOCKS_PER_SEC;
                         //}
                         acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1)); //get the ACK number
