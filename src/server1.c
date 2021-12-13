@@ -227,7 +227,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
            // printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
             // If we received an ACK for previous segment, we start the timer. Else the previous timer is still running.
             //if(timedout == 0){
-                clock_gettime(CLOCK_REALTIME, &begin_timeouts[i]);
+                clock_gettime(CLOCK_MONOTONIC, &begin_timeouts[i]);
                 //begin = clock();
            // }
             timedout = 0;
@@ -285,7 +285,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                         int RTT = 0;
                         //if(i == 0){
                             struct timespec end_time;
-                            clock_gettime(CLOCK_REALTIME, &end_time);
+                            clock_gettime(CLOCK_MONOTONIC, &end_time);
                             int duree_emition = (int) ((begin_timeouts[loop_max].tv_sec*100000 + begin_timeouts[loop_max].tv_nsec/1000) - (begin_timeouts[i].tv_sec*100000 + begin_timeouts[i].tv_nsec/1000)); // durée d'emission des paquets en us
                             int time_taken = (int) ((end_time.tv_sec*100000 + end_time.tv_nsec/1000)) - ((begin_timeouts[i].tv_sec*100000 + begin_timeouts[i].tv_nsec/1000));
                             RTT = time_taken - duree_emition; 
