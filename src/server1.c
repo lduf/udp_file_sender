@@ -136,16 +136,16 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
 
     // Theses stacks are used to store data in order to implement some TCP mechanisms 
-    STACK acks = stack_init('A'); // Lasts received ACKs
-    STACK segments = stack_init('S'); // Here we store the segments corresponding sequence numbers.
+    STACK acks = stack_init(); // Lasts received ACKs
+    STACK segments = stack_init(); // Here we store the segments corresponding sequence numbers.
 
-  //  segments->mode = 'S';
-   // acks->mode = 'A'; // We initialize the mode to A.
+    
     acks = stack_push(acks, 0); // We push -1 to the stack, because we don't know the first ACK yet.
     acks->RTT = DEFAULT_RTT; // We initialize the RTT to 50.
-    
-    segments = stack_push(segments, 0); // Because of the calculation method, we push -1 to the stack. So the first segment will be sent with sequence number 0.
+    acks->mode = 'A'; // We initialize the mode to A.
 
+    segments = stack_push(segments, 0); // Because of the calculation method, we push -1 to the stack. So the first segment will be sent with sequence number 0.
+    segments->mode = 'S';
 
     int packet_number = 0; // Packet number should be 0
     int acked = acks->element; // The last ACK received

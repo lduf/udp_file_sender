@@ -6,12 +6,9 @@
  * 
  * @return stack The stack
  */
-STACK stack_init(int mode) {
+STACK stack_init() {
 
     STACK stack = (STACK) NULL;
-    printf("Stack mode is %d\n", mode);
-    stack->mode = mode;
-    printf("Stack created\n");
 	return(stack);
 }
 
@@ -26,7 +23,7 @@ STACK stack_init(int mode) {
 STACK stack_push(STACK stack, int element) {
     STACK new_stack = (STACK) malloc(sizeof(ELEMSTACK));
     new_stack->element = element;
-    new_stack->mode = stack->mode;
+    new_stack->mode = (stack->mode != NULL) ? stack->mode : 0;
     new_stack->next = stack;
     
     int duplicate = 0;
