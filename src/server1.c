@@ -280,7 +280,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 else{
                     end = clock(); // We stop the timer.
                     if (compareString(ack_buffer, "ACK[0-9]{6}")){
-                        int RTT = 0;
                         if(i == 0){
                             RTT = 1000000 * (end - begin) / CLOCKS_PER_SEC;
                         }
