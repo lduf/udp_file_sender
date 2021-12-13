@@ -6,9 +6,10 @@
  * 
  * @return stack The stack
  */
-STACK stack_init() {
+STACK stack_init(int mode) {
 
     STACK stack = (STACK) NULL;
+    stack->mode = mode;
 	return(stack);
 }
 
