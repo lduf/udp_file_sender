@@ -181,7 +181,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             break;
         }
         // Creating the timeouts which will be used to calculate the RTT. The array size is the size of the window to be sent.
-        clock_t begin_timeouts[next_window_size];
         
         printf("Window size : %d\n", window_size);
         
@@ -226,10 +225,9 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
        //     printf("Sending segment %06d\n", packet_number);
            // printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
             // If we received an ACK for previous segment, we start the timer. Else the previous timer is still running.
-            //if(timedout == 0){
-                begin_timeouts[i] = clock();
-                //begin = clock();
-           // }
+            if(timedout == 0){
+                begin = clock();
+            }
             timedout = 0;
 
             // Send the segment
@@ -270,7 +268,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             if (select(sockfd+1, &readset, NULL, NULL, &tv)== 0){
                 // If the select timed out, raise the timedout flag so the segment will be resend.
                 printf("TIMEOUT for packet %d !\n", packet_number);
-                printf("%d , %d\n", begin_timeouts[i], begin_timeouts[loop_max]);
                 timedout = 1;
                // next_window_size = ((int) window_size/2 > DEFAULT_WINDOW_SIZE) ? (int) window_size/2 : DEFAULT_WINDOW_SIZE;
                //break;
@@ -281,19 +278,12 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         //            printf("recvfrom failed.\n");
                 }
                 else{
-                    //end = clock(); // We stop the timer.
+                    end = clock(); // We stop the timer.
                     if (compareString(ack_buffer, "ACK[0-9]{6}")){
                         int RTT = 0;
-                        //if(i == 0){
-                            clock_t end_time;
-                            end_time = clock();
-                            int duree_emition = (int) 100000*((begin_timeouts[loop_max] / CLOCKS_PER_SEC) - (begin_timeouts[i] / CLOCKS_PER_SEC)); // durée d'emission des paquets en us
-                            int time_taken = (int) 100000*((end_time / CLOCKS_PER_SEC) - ((begin_timeouts[i] / CLOCKS_PER_SEC))); // durée de réception des paquets en secondes
-                            RTT = time_taken - duree_emition; 
-                            printf("RTT : %d us\n", RTT);
-                            printf("Start time for element %d : %d\n durée émission : %d \n", i, time_taken, duree_emition);
-                            //RTT = 1000000 * (end - begin) / CLOCKS_PER_SEC;
-                        //}
+                        if(i == 0){
+                            RTT = 1000000 * (end - begin) / CLOCKS_PER_SEC;
+                        }
                         acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1)); //get the ACK number
                         //printf("ACK %d\n", acked);
                         acks = stack_push(acks, acked); // We push the ACK number to the stack.
