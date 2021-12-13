@@ -181,13 +181,13 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             break;
         }
         
-        printf("Window size : %d\n", window_size);
+      //  printf("Window size : %d\n", window_size);
         
         //  packet_number = next_seq_to_send(acks, segments);
         // Windows congestion. If the window is full, wait for the client to send an ACK.
         for (int i = 0; i < window_size && flag_all_received == 0; i++)
         {
-            printf("Envoie de %d sur ma fenêtre de %d\n", i, window_size);
+        //    printf("Envoie de %d sur ma fenêtre de %d\n", i, window_size);
             //Get the next packet number to send. If timeout, send the last packet again.
             packet_number = next_seq_to_send(acks, segments, timedout, flag_eof);
             //Here we add the previous packet number to the sent segments stack.
