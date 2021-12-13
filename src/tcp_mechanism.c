@@ -135,6 +135,7 @@ void fast_recovery() {
  */
  int new_window_size(STACK segs, STACK acks, int positive_ack, int timedout) {
      if (timedout == 1) {
+         sRtt = sRtt * 1.875;
          cwnd = DEFAULT_CWND;
          printf("Timeout occured, setting windows to %d...\n", cwnd);
         return cwnd;
