@@ -117,7 +117,6 @@ void fast_recovery() {
     else{
         cwnd = DEFAULT_CWND;
     }
-    FAST_RECOVERY_MOD = 0;
     //cwnd = ssthresh;
 }
 
@@ -145,7 +144,7 @@ void fast_recovery() {
      if (cwnd >= ssthresh) {
          congestion_avoidance();
      }  
-     if (FAST_RECOVERY_MOD == 1) {
+     if (FAST_RECOVERY_MOD == 1 && FAST_RETRANSMIT_MOD == 1) {
          fast_recovery();
      }
     
