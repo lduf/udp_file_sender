@@ -4,11 +4,11 @@
 #include <math.h>
 #include "stack.h"
 #include "utils.h"
-
+ 
 #define MAX_DUPLICATE_ACK 3
 #define ALPHA 0.02
 #define BETA 0.01
-#define DEFAULT_CWND 1
+#define DEFAULT_CWND 2
 
 #define FAST_RECOVERY_MOD 1
 int next_seq_to_send(STACK acks, STACK segs, int timedout, int eof);
