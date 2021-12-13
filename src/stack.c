@@ -32,19 +32,18 @@ STACK stack_push(STACK stack, int element) {
     //         duplicate = duplicate + 1;
     //     }
     // }
-    int i = 0;
     int resent_packet = 0;
     int resent_duplicate = 0;
     while(stack != NULL) {
         if(stack->element > element) {
             resent_packet = stack->element;
+            printf("NOOOOOOOOOOOOOOOT HIGHER PACKET resent packet: %d\n", resent_packet);
             resent_duplicate = stack->duplicate;
         }
-        if(stack->element == element) {
+        else if(stack->element == element) {
             duplicate++;
         }
         stack = stack->next;
-        i++;
     }
     if(resent_packet != 0) {
         new_stack->element = resent_packet;
