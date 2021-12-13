@@ -43,4 +43,4 @@ if __name__ == '__main__':
     file_name = str(sys.argv[1])
     pwd = str(sys.argv[2])
     for _ in range(10):
-        print(exec(1, name1, name2, port, file_name, pwd)) #921kB sur le client 1 :0 wtfffff bggg, faut juste checker que le fichier est bien reçu (en mode l'image n'est pas corrompue) ah ouii
+        print(exec(1, name1, name2, port, file_name, pwd)) 

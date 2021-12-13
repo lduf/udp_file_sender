@@ -134,24 +134,24 @@ void fast_recovery() {
  int new_window_size(STACK segs, STACK acks, int positive_ack, int timedout) {
      if (timedout == 1) {
          cwnd = DEFAULT_CWND;
-         printf("Timeout occured, setting windows to %d...\n", cwnd);
+        // printf("Timeout occured, setting windows to %d...\n", cwnd);
         return cwnd;
      }
      if (swnd < ssthresh){
          slow_start(positive_ack);
-         printf("Slow start  %d...\n", cwnd);
+       //  printf("Slow start  %d...\n", cwnd);
      } 
      if (acks->duplicate > MAX_DUPLICATE_ACK ) { //&& cwnd >= ssthresh
          fast_retransmit();
-         printf("fast retransmit  %d...\n", cwnd);
+      //   printf("fast retransmit  %d...\n", cwnd);
      } 
      if (cwnd >= ssthresh) {
          congestion_avoidance();
-         printf("congestion_avoidance %d...\n", cwnd);
+       //  printf("congestion_avoidance %d...\n", cwnd);
      }  
      if (FAST_RECOVERY_MOD == 1 && FAST_RETRANSMIT_MOD == 1) {
          fast_recovery();
-         printf("fast_recovery %d...\n", cwnd);
+      //   printf("fast_recovery %d...\n", cwnd);
      }
     
      swnd = cwnd;//min(cwnd, awnd);
