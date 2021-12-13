@@ -10,7 +10,6 @@
 #define BETA 0.01
 #define DEFAULT_CWND 1
 
-#define FAST_RECOVERY_MOD 1
 int next_seq_to_send(STACK acks, STACK segs, int timedout, int eof);
 int estimate_timeout(double rtt);
 void slow_start(int positive_ack);
