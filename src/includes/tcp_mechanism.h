@@ -17,4 +17,4 @@ void slow_start(int positive_ack);
 void congestion_avoidance() ;
 void fast_retransmit() ;
 void fast_recovery();
-int new_window_size(STACK segs, STACK acks, int positive_ack);
+int new_window_size(STACK segs, STACK acks, int positive_ack, int timedout);
