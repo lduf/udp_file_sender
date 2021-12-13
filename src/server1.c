@@ -212,7 +212,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 // If the file is finished, we send the last segment with the flag EOF
                 flag_eof = 1;
                 last_segment_number = packet_number;
-                printf("File finished on packet n°%d.\n", last_segment_number);
+          //      printf("File finished on packet n°%d.\n", last_segment_number);
                 //handle_error("File finished");
             }
             // 
@@ -225,7 +225,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             //printf("Segmented file size : %d\n", strlen(segmented_file));
             //strcat(buffer, segmented_file);
             memcpy(&buffer[BIT_OFFSET], segmented_file, segment_size*sizeof(char));
-            printf("Sending segment %06d\n", packet_number);
+       //     printf("Sending segment %06d\n", packet_number);
            // printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
             // If we received an ACK for previous segment, we start the timer. Else the previous timer is still running.
             if(timedout == 0){
@@ -235,8 +235,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
             // Send the segment
             
-            printf("Segment stack : \n");
-            stack_print(segments);
+        //    printf("Segment stack : \n");
+        //    stack_print(segments);
             //printf("Sending buffer %s\n", buffer);
             if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                     printf("sendto failed.\n");
@@ -261,7 +261,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             //next_window_size = window_size;
             // Initialize the select
             FD_SET(sockfd, &readset);
-            printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
+        //    printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
             tv.tv_sec = 0;
             tv.tv_usec = 1*estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
             //handle_error("select failed");
@@ -270,7 +270,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
             if (select(sockfd+1, &readset, NULL, NULL, &tv)== 0){
                 // If the select timed out, raise the timedout flag so the segment will be resend.
-                printf("TIMEOUT for packet %d !\n", packet_number);
+         //       printf("TIMEOUT for packet %d !\n", packet_number);
                 timedout = 1;
                // next_window_size = ((int) window_size/2 > DEFAULT_WINDOW_SIZE) ? (int) window_size/2 : DEFAULT_WINDOW_SIZE;
                //break;
@@ -278,7 +278,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             else{
                 //printf("Received ACK on packet %d\n", packet_number);
                 if(recvfrom(sockfd, ack_buffer, sizeof(ack_buffer), 0, (struct sockaddr *)client_addr, &client_addr_len) < 0){
-                    printf("recvfrom failed.\n");
+        //            printf("recvfrom failed.\n");
                 }
                 else{
                     end = clock(); // We stop the timer.
@@ -292,8 +292,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                         acks = stack_push(acks, acked); // We push the ACK number to the stack.
                         acks->RTT= RTT; // RTT in microseconds
                         nb_positives_acks++;
-                        printf("Acks stack\n");
-                        stack_print(acks);
+          //              printf("Acks stack\n");
+           //             stack_print(acks);
                         if(acks->duplicate > MAX_DUPLICATE_ACK){
                           //  next_window_size = ((int) window_size/2 > DEFAULT_WINDOW_SIZE) ? (int) window_size/2 : DEFAULT_WINDOW_SIZE;//voir pour fast recovery : stocker la dernière valeur de fenetre et la reprendre/2
                             flag_duplicated_ack = 1;
