@@ -11,7 +11,7 @@ int ssthresh = 1024; // seuil de congestion slow start
 int FAST_RECOVERY_MOD = 0; // mode de récupération rapide
 int FAST_RETRANSMIT_MOD = 0; //mode fast retransmit
 int fast_rt_window  = DEFAULT_CWND; // fenêtre de congestion fast retransmit
-
+int congestion = 0; // congestion factor for time out
 
 /**
  * @brief This function is used to give the next packet to send. It implement the fast retransmission mechanism.
@@ -65,7 +65,9 @@ int estimate_timeout(double rtt) {
     sRtt = (1 - ALPHA) * sRtt + ALPHA*rtt;
     devRtt = (1 - BETA) * devRtt + BETA * fabs(rtt - sRtt);
     //printf("Estimated RTT: %f us\n", sRtt);
-    return (int) (sRtt + 4 * devRtt);
+    int timeout = (int) (1+congestion)*(sRtt + 4 * devRtt);
+    congestion = 0;
+    return timeout;
 }
 
 /**
@@ -135,7 +137,7 @@ void fast_recovery() {
  */
  int new_window_size(STACK segs, STACK acks, int positive_ack, int timedout) {
      if (timedout == 1) {
-         sRtt = sRtt * 1.875;
+         congestion = 1;
          cwnd = DEFAULT_CWND;
          printf("Timeout occured, setting windows to %d...\n", cwnd);
         return cwnd;
