@@ -150,7 +150,7 @@ void fast_recovery() {
          printf("congestion_avoidance %d...\n", cwnd);
      }  
      if (FAST_RECOVERY_MOD == 1 && FAST_RETRANSMIT_MOD == 1) {
-         //fast_recovery();
+         fast_recovery();
          printf("fast_recovery %d...\n", cwnd);
      }
     
