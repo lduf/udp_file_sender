@@ -23,6 +23,7 @@ STACK stack_init() {
 STACK stack_push(STACK stack, int element) {
     STACK new_stack = (STACK) malloc(sizeof(ELEMSTACK));
     new_stack->element = element;
+    new_stack->mode = stack->mode;
     new_stack->next = stack;
     
     int duplicate = 0;
@@ -35,12 +36,12 @@ STACK stack_push(STACK stack, int element) {
     int resent_packet = element;
     int resent_duplicate = 0;
     while(stack != NULL) {
-        if(stack->element > resent_packet) {
+        if(stack->mode == 'A' && stack->element > resent_packet) {
             resent_packet = stack->element;
             printf("NOOOOOOOOOOOOOOOT HIGHER PACKET resent packet: %d\n", resent_packet);
             resent_duplicate = stack->duplicate;
         }
-        else if(stack->element == element) {
+        if(stack->element == element) {
             duplicate++;
         }
         stack = stack->next;

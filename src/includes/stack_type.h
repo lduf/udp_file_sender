@@ -6,6 +6,7 @@ struct model_elem {
   int element ;
   int duplicate;
   int RTT;
+  char mode;
   struct model_elem* next;
 };
 
