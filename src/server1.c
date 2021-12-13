@@ -172,7 +172,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
 
     do{
-        printf("\n*******\n");
+   //     printf("\n*******\n");
          // Clear the buffers
         memset(buffer, 0, sizeof(buffer));
         memset(segmented_file, 0, sizeof(segmented_file));
@@ -185,7 +185,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         }
         // Creating the timeouts which will be used to calculate the RTT. The array size is the size of the window to be sent.
         
-        printf("Window size : %d\n", window_size);
+    //    printf("Window size : %d\n", window_size);
         
         //  packet_number = next_seq_to_send(acks, segments);
         // Windows congestion. If the window is full, wait for the client to send an ACK.
@@ -234,8 +234,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
             // Send the segment
             
-            printf("Segment stack : \n");
-            stack_print(segments);
+     //       printf("Segment stack : \n");
+      //      stack_print(segments);
             //printf("Sending buffer %s\n", buffer);
             if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                     printf("sendto failed.\n");
@@ -262,15 +262,15 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             //next_window_size = window_size;
             // Initialize the select
             FD_SET(sockfd, &readset);
-            printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
+      //      printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
             tv.tv_sec = 0;
-            tv.tv_usec = (1 + timedout)*estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
+            tv.tv_usec = estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
             //handle_error("select failed");
             char ack_buffer[16];
             memset(ack_buffer, 0, sizeof(ack_buffer));
             if (select(sockfd+1, &readset, NULL, NULL, &tv)== 0){
                 // If the select timed out, raise the timedout flag so the segment will be resend.
-                printf("TIMEOUT for packet %d !\n", packet_number);
+          //      printf("TIMEOUT for packet %d !\n", packet_number);
                 timedout = 1;
                // next_window_size = ((int) window_size/2 > DEFAULT_WINDOW_SIZE) ? (int) window_size/2 : DEFAULT_WINDOW_SIZE;
                //break;
@@ -291,8 +291,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                         acks = stack_push(acks, acked); // We push the ACK number to the stack.
                         acks->RTT= RTT; // RTT in microseconds
                         nb_positives_acks++;
-                        printf("Acks stack\n");
-                        stack_print(acks);
+          //              printf("Acks stack\n");
+           //             stack_print(acks);
                         if(acks->duplicate > MAX_DUPLICATE_ACK){
                           //  next_window_size = ((int) window_size/2 > DEFAULT_WINDOW_SIZE) ? (int) window_size/2 : DEFAULT_WINDOW_SIZE;//voir pour fast recovery : stocker la dernière valeur de fenetre et la reprendre/2
                             flag_duplicated_ack = 1;
