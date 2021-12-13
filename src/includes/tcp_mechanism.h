@@ -5,7 +5,7 @@
 #include "stack.h"
 #include "utils.h"
  
-#define MAX_DUPLICATE_ACK 3
+#define MAX_DUPLICATE_ACK 2
 #define ALPHA 0.02
 #define BETA 0.01
 #define DEFAULT_CWND 1
