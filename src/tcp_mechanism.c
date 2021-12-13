@@ -9,6 +9,7 @@ int awnd = 1; // fenêtre de réception
 int cwnd = DEFAULT_CWND; // fenêtre de congestion
 int ssthresh = 1024; // seuil de congestion slow start
 int FAST_RETRANSMIT_MOD = 0; //mode fast retransmit
+int FAST_RECOVERY_MOD = 1;
 int fast_rt_window  = DEFAULT_CWND; // fenêtre de congestion fast retransmit
 
 
