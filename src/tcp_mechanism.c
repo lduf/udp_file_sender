@@ -64,9 +64,7 @@ int estimate_timeout(double rtt) {
     sRtt = (1 - ALPHA) * sRtt + ALPHA*rtt;
     devRtt = (1 - BETA) * devRtt + BETA * fabs(rtt - sRtt);
     //printf("Estimated RTT: %f us\n", sRtt);
-    int timeout = (int) (1+congestion)*(sRtt + 4 * devRtt);
-    congestion = 0;
-    return timeout;
+    return (sRtt + 4 * devRtt);
 }
 
 /**
