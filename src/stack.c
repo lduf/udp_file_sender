@@ -23,7 +23,7 @@ STACK stack_init() {
 STACK stack_push(STACK stack, int element) {
     STACK new_stack = (STACK) malloc(sizeof(ELEMSTACK));
     new_stack->element = element;
-    new_stack->mode = (stack->mode != NULL) ? stack->mode : 0;
+    new_stack->mode = (stack != NULL) ? stack->mode : 0;
     new_stack->next = stack;
     
     int duplicate = 0;
