@@ -213,7 +213,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 //handle_error("File finished");
             }
             // 
-            // Concate the header and the file
+            // Concate the h eader and the file
 
             //print the buffer content and the size of the buffer
             //printf("Buffer content : %s\n", buffer);
@@ -261,7 +261,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             FD_SET(sockfd, &readset);
             printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
             tv.tv_sec = 0;
-            tv.tv_usec = 1*estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
+            tv.tv_usec = (1 + timedout)*estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
             //handle_error("select failed");
             char ack_buffer[16];
             memset(ack_buffer, 0, sizeof(ack_buffer));
@@ -306,7 +306,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             //window_size = next_window_size;
         }
        // sleep(3);
-        window_size = new_window_size(segments, acks, ((nb_positives_acks == loop_max) ? nb_positives_acks : 0)); 
+        window_size = new_window_size(segments, acks, ((nb_positives_acks == loop_max) ? nb_positives_acks : 0), timedout); 
      
         
     }while(flag_eof == 0 || flag_all_received == 0); // We send the file until we reach the end of the file AND until we receive an ACK for the last sent packet.
