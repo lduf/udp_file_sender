@@ -3,7 +3,7 @@
 #include "stack_type.h"
 #define MAX_STACK_SIZE 5
 
-STACK stack_init();
+STACK stack_init(int mode);
 STACK stack_push(STACK stack, int element);
 STACK stack_pop(STACK stack);
 STACK stack_pop_last(STACK stack);
