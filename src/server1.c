@@ -270,6 +270,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             if (select(sockfd+1, &readset, NULL, NULL, &tv)== 0){
                 // If the select timed out, raise the timedout flag so the segment will be resend.
                 printf("TIMEOUT for packet %d !\n", packet_number);
+                printf("%d , %d\n", begin_timeouts[i], begin_timeouts[loop_max]);
                 timedout = 1;
                // next_window_size = ((int) window_size/2 > DEFAULT_WINDOW_SIZE) ? (int) window_size/2 : DEFAULT_WINDOW_SIZE;
                //break;
