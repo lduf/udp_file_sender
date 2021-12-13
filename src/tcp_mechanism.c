@@ -126,10 +126,15 @@ void fast_recovery() {
  * @param stack segs 
  * @param stack acks
  * @param int positive_ack : the number of positive ACKs received, 0 if all ACK are received
+ * @param int timedout : 1 if the timeout occured, 0 otherwise
  *
  * @return int Window size
  */
- int new_window_size(STACK segs, STACK acks, int positive_ack) {
+ int new_window_size(STACK segs, STACK acks, int positive_ack, int timedout) {
+     if (timedout == 1) {
+         cwnd = DEFAULT_CWND;
+        return cwnd;
+     }
      if (swnd < ssthresh){
          slow_start(positive_ack);
      } 
