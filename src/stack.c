@@ -9,7 +9,9 @@
 STACK stack_init(int mode) {
 
     STACK stack = (STACK) NULL;
+    printf("Stack mode is %d\n", mode);
     stack->mode = mode;
+    printf("Stack created\n");
 	return(stack);
 }
 
