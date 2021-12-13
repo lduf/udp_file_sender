@@ -1,7 +1,7 @@
 #include "includes/server1.h"
 
 int segment_size = DEFAULT_SEGMENT_SIZE - (BIT_OFFSET);
-int window_size = DEFAULT_WINDOW_SIZE;
+int window_size = DEFAULT_WINDOW_SIZE; 
 
 /**
  * @brief This function is used to create the UDP server, and bind it to the specified port.
