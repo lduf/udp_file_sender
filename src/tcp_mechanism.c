@@ -117,6 +117,7 @@ void fast_recovery() {
     else{
         cwnd = DEFAULT_CWND;
     }
+    FAST_RETRANSMIT_MOD = 0;
     //cwnd = ssthresh;
 }
 
