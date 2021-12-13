@@ -156,6 +156,7 @@ int* stack_to_array(STACK stack) {
  */
 void stack_print(STACK stack) {
     STACK new_stack = stack;
+    printf("%c : ", stack->mode);
     while (new_stack != NULL) {
         printf("%d (%d) %d| ", new_stack->element, new_stack->duplicate, new_stack->RTT);
         new_stack = new_stack->next;
