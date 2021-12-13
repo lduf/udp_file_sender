@@ -287,7 +287,9 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                             struct timespec end_time;
                             clock_gettime(CLOCK_REALTIME, &end_time);
                             int duree_emition = (int) ((begin_timeouts[loop_max].tv_sec*100000 + begin_timeouts[loop_max].tv_nsec/1000) - (begin_timeouts[i].tv_sec*100000 + begin_timeouts[i].tv_nsec/1000)); // durée d'emission des paquets en us
-                            RTT = (end_time.tv_sec - begin_timeouts[i].tv_sec)*1000000 + (end_time.tv_nsec - begin_timeouts[i].tv_nsec)/1000 - duree_emition; 
+                            int start_time_us = (int) ((begin_timeouts[i].tv_sec*100000 + begin_timeouts[i].tv_nsec/1000));
+                            int end_time_us = (int) ((end_time.tv_sec*100000 + end_time.tv_nsec/1000));
+                            RTT = end_time_us - start_time_us - duree_emition; 
                             printf("RTT : %d us\n", RTT);
                             printf("Start time for element %d : %ld.%ld\n Stop time : %ld.%ld \n", i, begin_timeouts[i].tv_sec, begin_timeouts[i].tv_nsec, end_time.tv_sec, end_time.tv_nsec);
                             //RTT = 1000000 * (end - begin) / CLOCKS_PER_SEC;
