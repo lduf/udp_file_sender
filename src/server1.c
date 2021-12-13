@@ -291,7 +291,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                             long long int  end_time_us = (long long int ) ((end_time.tv_sec*100000 + end_time.tv_nsec/1000));
                             RTT = end_time_us - start_time_us - duree_emition; 
                             printf("RTT : %d us\n", RTT);
-                            printf("Start time for element %d : %d\n Stop time : %d \n", i, start_time_us, end_time_us);
+                            printf("Start time for element %d : %lld\n Stop time : %lld \n", i, start_time_us, end_time_us);
                             //RTT = 1000000 * (end - begin) / CLOCKS_PER_SEC;
                         //}
                         acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1)); //get the ACK number
