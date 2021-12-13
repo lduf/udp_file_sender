@@ -8,8 +8,8 @@ int swnd = 1; // fenêtre d'émission
 int awnd = 1; // fenêtre de réception
 int cwnd = DEFAULT_CWND; // fenêtre de congestion
 int ssthresh = 1024; // seuil de congestion slow start
+int FAST_RECOVERY_MOD = 1;
 int FAST_RETRANSMIT_MOD = 0; //mode fast retransmit
-int FAST_RECOVERY_MOD = 0; //mode fast recovery
 int fast_rt_window  = DEFAULT_CWND; // fenêtre de congestion fast retransmit
 
 
@@ -101,9 +101,9 @@ void congestion_avoidance() {
  *
 */
 void fast_retransmit() {
+    FAST_RETRANSMIT_MOD = 1;
     fast_rt_window = cwnd;
     cwnd = DEFAULT_CWND;
-    FAST_RECOVERY_MOD = 1;
 }
 
 /**
@@ -112,8 +112,12 @@ void fast_retransmit() {
  * 
  */
 void fast_recovery() {
-    cwnd = (fast_rt_window / 2 >= DEFAULT_CWND) ? fast_rt_window / 2 : DEFAULT_CWND;
-    FAST_RECOVERY_MOD = 0;
+    if(FAST_RECOVERY_MOD == 1){
+        cwnd = (fast_rt_window / 2 >= DEFAULT_CWND) ? fast_rt_window / 2 : DEFAULT_CWND;
+    }
+    else{
+        cwnd = DEFAULT_CWND;
+    }
     //cwnd = ssthresh;
 }
 
@@ -145,7 +149,7 @@ void fast_recovery() {
          congestion_avoidance();
          printf("congestion_avoidance %d...\n", cwnd);
      }  
-     if (FAST_RECOVERY_MOD == 1) {
+     if (FAST_RECOVERY_MOD == 1 && FAST_RETRANSMIT_MOD == 1) {
          fast_recovery();
          printf("fast_recovery %d...\n", cwnd);
      }
