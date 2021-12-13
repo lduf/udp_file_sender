@@ -181,7 +181,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             break;
         }
         // Creating the timeouts which will be used to calculate the RTT. The array size is the size of the window to be sent.
-        struct timespec begin_timeouts[next_window_size];
+        clock_t begin_timeouts[next_window_size];
         
         printf("Window size : %d\n", window_size);
         
@@ -227,7 +227,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
            // printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
             // If we received an ACK for previous segment, we start the timer. Else the previous timer is still running.
             //if(timedout == 0){
-                clock_gettime(CLOCK_MONOTONIC, &begin_timeouts[i]);
+                begin_timeouts[i] = clock();
                 //begin = clock();
            // }
             timedout = 0;
@@ -284,10 +284,10 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                     if (compareString(ack_buffer, "ACK[0-9]{6}")){
                         int RTT = 0;
                         //if(i == 0){
-                            struct timespec end_time;
-                            clock_gettime(CLOCK_MONOTONIC, &end_time);
-                            int duree_emition = (int) ((begin_timeouts[loop_max].tv_sec*100000 + begin_timeouts[loop_max].tv_nsec/1000) - (begin_timeouts[i].tv_sec*100000 + begin_timeouts[i].tv_nsec/1000)); // durée d'emission des paquets en us
-                            int time_taken = (int) ((end_time.tv_sec*100000 + end_time.tv_nsec/1000)) - ((begin_timeouts[i].tv_sec*100000 + begin_timeouts[i].tv_nsec/1000));
+                            clock_t end_time;
+                            end_time = clock();
+                            int duree_emition = (int) 100000*((begin_timeouts[loop_max] / CLOCKS_PER_SEC) - (begin_timeouts[i] / CLOCKS_PER_SEC)); // durée d'emission des paquets en us
+                            int time_taken = (int) 100000*((end_time / CLOCKS_PER_SEC) - ((begin_timeouts[i] / CLOCKS_PER_SEC))); // durée de réception des paquets en secondes
                             RTT = time_taken - duree_emition; 
                             printf("RTT : %d us\n", RTT);
                             printf("Start time for element %d : %d\n durée émission : %d \n", i, time_taken, duree_emition);
