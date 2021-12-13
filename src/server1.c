@@ -253,6 +253,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         int loop_max = window_size;
         int nb_positives_acks = 0;
         int RTT = 0;
+        timedout = 0;
         for (int i = 0; i < loop_max && flag_all_received == 0 && flag_duplicated_ack == 0; i++) //
         {
             //next_window_size = window_size;
@@ -264,7 +265,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             //handle_error("select failed");
             char ack_buffer[16];
             memset(ack_buffer, 0, sizeof(ack_buffer));
-            timedout = 0;
             if (select(sockfd+1, &readset, NULL, NULL, &tv)== 0){
                 // If the select timed out, raise the timedout flag so the segment will be resend.
                 printf("TIMEOUT for packet %d !\n", packet_number);
