@@ -180,6 +180,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             flag_all_received = 1;
             break;
         }
+        // Creating the timeouts which will be used to calculate the RTT. The array size is the size of the window to be sent.
+        struct timespec begin_timeouts[next_window_size];
         
       //  printf("Window size : %d\n", window_size);
         
@@ -229,6 +231,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
            // printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
             // If we received an ACK for previous segment, we start the timer. Else the previous timer is still running.
             if(timedout == 0){
+                clock_gettime(CLOCK_MONOTONIC, &begin_timeouts[i]);
                 begin = clock();
             }
             timedout = 0;
@@ -284,9 +287,14 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                     end = clock(); // We stop the timer.
                     if (compareString(ack_buffer, "ACK[0-9]{6}")){
                         int RTT = 0;
-                        if(i == 0){
-                            RTT = 1000000 * (end - begin) / CLOCKS_PER_SEC;
-                        }
+                        //if(i == 0){
+                            struct timespec end_time;
+                            clock_gettime(CLOCK_MONOTONIC, &end_time);
+
+                            //RTT = (end_time.tv_sec - begin_timeouts[i].tv_sec);
+                            RTT = 1000000 * (end_time.tv_nsec - begin_timeouts[i].tv_nsec) / 1000000000.0;
+                            //RTT = 1000000 * (end - begin) / CLOCKS_PER_SEC;
+                        //}
                         acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1)); //get the ACK number
                         //printf("ACK %d\n", acked);
                         acks = stack_push(acks, acked); // We push the ACK number to the stack.
