@@ -66,9 +66,6 @@ int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_add
     if (getsockname(new_sockfd, (struct sockaddr *)&new_servaddr, &new_servaddr_len) < 0)
         handle_error("getsockname failed");
 
-    // create a child process to handle the new connection
-
-    fork();
     // Send SYNACK
     sprintf(syn_ack, "SYN-ACK%d", new_port);
     if (sendto(sockfd, syn_ack, strlen(syn_ack), 0, (struct sockaddr *)client_addr, client_addr_len) < 0)
