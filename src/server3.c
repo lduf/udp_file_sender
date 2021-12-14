@@ -82,8 +82,8 @@ int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_add
       //  printf("Received ACK from client.\n");
     }
     else{
-        printf("Received something else.\n");
-        handle_error("Received something else after SYN-ACK");
+        printf("Received something else : %s\n", buffer);
+        //handle_error("Received something else after SYN-ACK");
     }
 
     return new_sockfd;
