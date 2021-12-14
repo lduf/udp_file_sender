@@ -398,6 +398,7 @@ int main(int argc, char *argv[]) {
                 //fork();
                 // clear buffer
                 if (fork() == 0){
+                    printf("Child process created. Using socket %d\n", new_sockfd);
                 memset(buffer, 0, BUFFER_LIMIT);
                 // Send file given by the client
                 if (recvfrom(new_sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
