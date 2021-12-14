@@ -245,7 +245,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                     return -1;
             }
             if(flag_eof == 1){
-                printf("Sending EOF : BREAKKKKKKK   ING NEWS\n");
+               // printf("Sending EOF : BREAKKKKKKK   ING NEWS\n");
                // flag_all_received = 1;
                window_size = i + 1;
                 break;
@@ -314,8 +314,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
      
         
     }while(flag_eof == 0 || flag_all_received == 0); // We send the file until we reach the end of the file AND until we receive an ACK for the last sent packet.
-    printf("File sent.\n");
-    printf("Closing file.\n");
+   // printf("File sent.\n");
+   // printf("Closing file.\n");
 
     fclose(file);
 
@@ -336,7 +336,7 @@ int end_connection(int sockfd, struct sockaddr_in *client_addr, socklen_t client
     sprintf(fin, "FIN");
     if (sendto(sockfd, fin, strlen(fin), 0, (struct sockaddr *)client_addr, client_addr_len) < 0)
         return -1;
-    printf("Connection ended.\n");
+    //printf("Connection ended.\n");
     return 0;
 }
 
@@ -375,7 +375,7 @@ int main(int argc, char *argv[]) {
     int sockfd = create_udp_server(port);
 
     // Wait for SYN
-    printf("Waiting for client to send SYN...\n");
+   // printf("Waiting for client to send SYN...\n");
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
     char buffer[BUFFER_LIMIT];
@@ -383,7 +383,7 @@ int main(int argc, char *argv[]) {
     if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
         handle_error("recvfrom failed");
 
-    printf("Received : %s\n", buffer);
+   // printf("Received : %s\n", buffer);
     int new_sockfd = 0; 
     if(compareString(buffer, "SYN")){
       //  printf("Received SYN from client.\n");
