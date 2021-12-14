@@ -86,12 +86,12 @@ void slow_start(int positive_ack) {
 void congestion_avoidance() {
     cwnd = cwnd + 1;
 
-    //CHECK IF FRT
-    if(FAST_RETRANSMIT_MOD == 1){
-        ssthresh = cwnd;
-        cwnd = (cwnd/2 > DEFAULT_CWND) ? cwnd/2 : DEFAULT_CWND;
-        FAST_RETRANSMIT_MOD = 0;
-    }
+    // //CHECK IF FRT
+    // if(FAST_RETRANSMIT_MOD == 1){
+    //     ssthresh = cwnd;
+    //     cwnd = (cwnd/2 > DEFAULT_CWND) ? cwnd/2 : DEFAULT_CWND;
+    //     FAST_RETRANSMIT_MOD = 0;
+    // }
 }
 
 /**
@@ -103,7 +103,7 @@ void congestion_avoidance() {
 void fast_retransmit() {
     FAST_RETRANSMIT_MOD = 1;
     fast_rt_window = cwnd;
-    cwnd = DEFAULT_CWND;
+    cwnd = (cwnd/2 > DEFAULT_CWND) ? cwnd/2 : DEFAULT_CWND;
 }
 
 /**
