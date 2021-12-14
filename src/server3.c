@@ -384,7 +384,7 @@ int main(int argc, char *argv[]) {
         memset(buffer, 0, BUFFER_LIMIT);
         if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
             handle_error("recvfrom failed");
-            if (fork() == 0){
+            
                 // We create a child process to handle the connection.
                 printf("Received : %s\n", buffer);
             
@@ -397,6 +397,7 @@ int main(int argc, char *argv[]) {
                 }
                 //fork();
                 // clear buffer
+                if (fork() == 0){
                 memset(buffer, 0, BUFFER_LIMIT);
                 // Send file given by the client
                 if (recvfrom(new_sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
