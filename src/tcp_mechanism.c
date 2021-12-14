@@ -104,7 +104,7 @@ void fast_retransmit() {
     FAST_RETRANSMIT_MOD = 1;
     fast_rt_window = cwnd;
     cwnd = (cwnd/2 > DEFAULT_CWND) ? cwnd/2 : DEFAULT_CWND;
-    FAST_RECOVERY_MOD == 1;
+    FAST_RECOVERY_MOD = 1;
 }
 
 /**
@@ -115,7 +115,7 @@ void fast_retransmit() {
 void fast_recovery() {
     if(FAST_RECOVERY_MOD == 1){
        cwnd = (fast_rt_window / 2 >= DEFAULT_CWND) ? fast_rt_window / 2 : DEFAULT_CWND;
-       FAST_RECOVERY_MOD == 0;
+       FAST_RECOVERY_MOD = 0;
        FAST_RETRANSMIT_MOD = 0;
     }
     //cwnd = ssthresh;
