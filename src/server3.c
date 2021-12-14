@@ -430,7 +430,7 @@ int main(int argc, char *argv[]) {
                 double throughput = file_size / time_taken;
                 printf("(%d) File size %d\n", getpid(),file_size);
                 printf("(%d) Time taken: %f\n", getpid(),time_taken);
-                printf("(%D) Throughput: %E Byte/s\n", getpid(),throughput);
+                printf("(%d) Throughput: %E Byte/s\n", getpid(),throughput);
 
                 //end the session
                 end_connection(sockfd, &client_addr, client_addr_len);
