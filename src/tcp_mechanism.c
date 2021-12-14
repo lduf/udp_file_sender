@@ -9,7 +9,7 @@ int awnd = 1; // fenêtre de réception
 int cwnd = DEFAULT_CWND; // fenêtre de congestion
 int ssthresh = 8; // seuil de congestion slow start
 int FAST_RETRANSMIT_MOD = 0; //mode fast retransmit
-int FAST_RECOVERY_MOD = 1;
+int FAST_RECOVERY_MOD = 0;
 int fast_rt_window  = DEFAULT_CWND; // fenêtre de congestion fast retransmit
 
 
@@ -104,6 +104,7 @@ void fast_retransmit() {
     FAST_RETRANSMIT_MOD = 1;
     fast_rt_window = cwnd;
     cwnd = (cwnd/2 > DEFAULT_CWND) ? cwnd/2 : DEFAULT_CWND;
+    FAST_RECOVERY_MOD == 1;
 }
 
 /**
@@ -114,6 +115,8 @@ void fast_retransmit() {
 void fast_recovery() {
     if(FAST_RECOVERY_MOD == 1){
        cwnd = (fast_rt_window / 2 >= DEFAULT_CWND) ? fast_rt_window / 2 : DEFAULT_CWND;
+       FAST_RECOVERY_MOD == 0;
+       FAST_RETRANSMIT_MOD = 0;
     }
     //cwnd = ssthresh;
 }
