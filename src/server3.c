@@ -434,7 +434,6 @@ int main(int argc, char *argv[]) {
 
                 //end the session
                 end_connection(sockfd, &client_addr, client_addr_len);
-                close(new_sockfd);
                 //get current pid
 
                 kill(getpid(), SIGKILL);
