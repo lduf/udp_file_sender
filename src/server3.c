@@ -386,7 +386,7 @@ int main(int argc, char *argv[]) {
             handle_error("recvfrom failed");
 
             printf("Received : %s\n", buffer);
-            fork();
+           
             int new_sockfd = 0; 
             
             if(compareString(buffer, "SYN")){
@@ -394,7 +394,7 @@ int main(int argc, char *argv[]) {
                 new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
                 printf("New socket: %d\n", new_sockfd);
             }
-
+            fork();
             // clear buffer
             memset(buffer, 0, BUFFER_LIMIT);
             // Send file given by the client
