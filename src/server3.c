@@ -25,8 +25,8 @@ int create_udp_server(int port) {
 
     printf("Binding to port %d\n", port);
     if (bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
-       // return -1;
-        handle_error("bind failed");
+        return -1;
+        //handle_error("bind failed");
 
    printf("Binding successful\n");
 
