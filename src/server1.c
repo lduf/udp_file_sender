@@ -96,7 +96,7 @@ int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_add
  * @return The file.
  */
 FILE* get_file(char* path){
-    printf("Recherche du fichier au chemin suivant : %s\n", path);
+   // printf("Recherche du fichier au chemin suivant : %s\n", path);
     FILE* file = fopen(path, "r");
     if(file == NULL){
         printf("File not found.\n");
