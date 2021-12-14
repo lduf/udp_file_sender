@@ -385,23 +385,20 @@ int main(int argc, char *argv[]) {
         if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
             handle_error("recvfrom failed");
             
-                // We create a child process to handle the connection.
-                printf("Received : %s\n", buffer);
-            
-                int new_sockfd = 0; 
-                
-                if(compareString(buffer, "SYN")){
-                    printf("Received SYN from client.\n");
-                    new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
-                    printf("New socket: %d\n", new_sockfd);
-                }
-                else{
-                    continue;
-                }
-                //fork();
-                // clear buffer
-                if (fork() == 0){
-                    printf("Child process created. Using socket %d\n", new_sockfd);
+        // We create a child process to handle the connection.
+        printf("Received : %s\n", buffer);
+    
+        int new_sockfd = 0; 
+        
+        if(compareString(buffer, "SYN")){
+            printf("Received SYN from client.\n");
+            new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
+            printf("New socket: %d\n", new_sockfd);
+        
+        //fork();
+        // clear buffer
+            if (fork() == 0){
+                printf("Child process created. Using socket %d\n", new_sockfd);
                 memset(buffer, 0, BUFFER_LIMIT);
                 // Send file given by the client
                 if (recvfrom(new_sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
@@ -441,6 +438,7 @@ int main(int argc, char *argv[]) {
 
                 kill(getpid(), SIGKILL);
             }
+        }
     }
     close(sockfd);
     return 0;
