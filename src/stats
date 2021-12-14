@@ -1,9 +1,0 @@
-make
-for i in `seq 1 4`
-do
-    echo "Starting test $i"
-    echo "> server1"
-    ../bin/server1-DetecteurML 4313 > server1-$i.log 
-    echo "> server2"
-    ../bin/server2-DetecteurML 4314 > server2-$i.log
-done
