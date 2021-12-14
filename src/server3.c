@@ -384,53 +384,55 @@ int main(int argc, char *argv[]) {
         memset(buffer, 0, BUFFER_LIMIT);
         if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
             handle_error("recvfrom failed");
-
-            printf("Received : %s\n", buffer);
-           
-            int new_sockfd = 0; 
+            if (fork() == 0){
+                // We create a child process to handle the connection.
+                printf("Received : %s\n", buffer);
             
-            if(compareString(buffer, "SYN")){
-                printf("Received SYN from client.\n");
-                new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
-                printf("New socket: %d\n", new_sockfd);
+                int new_sockfd = 0; 
+                
+                if(compareString(buffer, "SYN")){
+                    printf("Received SYN from client.\n");
+                    new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
+                    printf("New socket: %d\n", new_sockfd);
+                }
+                //fork();
+                // clear buffer
+                memset(buffer, 0, BUFFER_LIMIT);
+                // Send file given by the client
+                if (recvfrom(new_sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
+                    handle_error("recvfrom failed");
+
+                printf("Received file name : %s\n", buffer);
+
+                //calculate the execution time
+                // to store the execution time of code
+                struct timespec start, finish;
+                double time_taken;
+
+                clock_gettime(CLOCK_MONOTONIC, &start);
+            
+                send_file(new_sockfd, &client_addr, client_addr_len, buffer);
+                close(new_sockfd);
+            
+                clock_gettime(CLOCK_MONOTONIC, &finish);
+
+            // calculate elapsed time by finding difference (end - begin) and
+                // dividing the difference by CLOCKS_PER_SEC to convert to seconds
+                time_taken = (finish.tv_sec - start.tv_sec);
+                time_taken += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+            
+            
+                
+                //calculate the throughput
+                int file_size = get_file_size(get_file(buffer));
+                double throughput = file_size / time_taken;
+                printf("File size %d\n", file_size);
+                printf("Time taken: %f\n", time_taken);
+                printf("Throughput: %E Byte/s\n", throughput);
+
+                //end the session
+                end_connection(sockfd, &client_addr, client_addr_len);
             }
-            //fork();
-            // clear buffer
-            memset(buffer, 0, BUFFER_LIMIT);
-            // Send file given by the client
-            if (recvfrom(new_sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
-                handle_error("recvfrom failed");
-
-            printf("Received file name : %s\n", buffer);
-
-            //calculate the execution time
-            // to store the execution time of code
-            struct timespec start, finish;
-            double time_taken;
-
-            clock_gettime(CLOCK_MONOTONIC, &start);
-        
-            send_file(new_sockfd, &client_addr, client_addr_len, buffer);
-            close(new_sockfd);
-        
-            clock_gettime(CLOCK_MONOTONIC, &finish);
-
-        // calculate elapsed time by finding difference (end - begin) and
-            // dividing the difference by CLOCKS_PER_SEC to convert to seconds
-            time_taken = (finish.tv_sec - start.tv_sec);
-            time_taken += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
-        
-        
-            
-            //calculate the throughput
-            int file_size = get_file_size(get_file(buffer));
-            double throughput = file_size / time_taken;
-            printf("File size %d\n", file_size);
-            printf("Time taken: %f\n", time_taken);
-            printf("Throughput: %E Byte/s\n", throughput);
-
-            //end the session
-            end_connection(sockfd, &client_addr, client_addr_len);
     }
     close(sockfd);
     return 0;
