@@ -7,7 +7,7 @@ double devRtt = 100;
 int swnd = 1; // fenêtre d'émission
 int awnd = 1; // fenêtre de réception
 int cwnd = DEFAULT_CWND; // fenêtre de congestion
-int ssthresh = 16; // seuil de congestion slow start
+int ssthresh = 8; // seuil de congestion slow start
 int FAST_RETRANSMIT_MOD = 0; //mode fast retransmit
 int FAST_RECOVERY_MOD = 0;
 int fast_rt_window  = DEFAULT_CWND; // fenêtre de congestion fast retransmit
@@ -133,7 +133,7 @@ void fast_recovery() {
  */
  int new_window_size(STACK segs, STACK acks, int positive_ack, int timedout) {
      if (timedout == 1) {
-         cwnd = DEFAULT_CWND;
+         cwnd = (int) (cwnd/2 > DEFAULT_CWND) ? cwnd/2 : DEFAULT_CWND; //DEFAULT_CWND;
         // printf("Timeout occured, setting windows to %d...\n", cwnd);
         return cwnd;
      }
