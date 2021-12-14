@@ -385,9 +385,10 @@ int main(int argc, char *argv[]) {
         if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
             handle_error("recvfrom failed");
 
-        // printf("Received : %s\n", buffer);
-            int new_sockfd = 0; 
+            printf("Received : %s\n", buffer);
             fork();
+            int new_sockfd = 0; 
+            
             if(compareString(buffer, "SYN")){
                 printf("Received SYN from client.\n");
                 new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
