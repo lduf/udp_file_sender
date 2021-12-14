@@ -377,7 +377,7 @@ int main(int argc, char *argv[]) {
 
     for(;;){
         // Wait for SYN
-        printf("Waiting for client to send SYN...\n");
+        printf("P(%d) Waiting for client to send SYN...\n", getpid());
         struct sockaddr_in client_addr;
         socklen_t client_addr_len = sizeof(client_addr);
         char buffer[BUFFER_LIMIT];
@@ -386,25 +386,25 @@ int main(int argc, char *argv[]) {
             handle_error("recvfrom failed");
             
         // We create a child process to handle the connection.
-        printf("Received : %s\n", buffer);
+        printf("P(%d) Received : %s\n",getpid(), buffer);
     
         int new_sockfd = 0; 
         
         if(compareString(buffer, "SYN")){
-            printf("Received SYN from client.\n");
+            printf("P(%d) Received SYN from client.\n", getpid());
             new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
-            printf("New socket: %d\n", new_sockfd);
+            printf("P(%d) New socket: %d\n", getpid(),new_sockfd);
         
         //fork();
         // clear buffer
             if (fork() == 0){
-                printf("Child process created. Using socket %d\n", new_sockfd);
+                printf("(%d) Child process created (parent process : %d). Using socket %d\n", getpid(), getppid(), new_sockfd); 
                 memset(buffer, 0, BUFFER_LIMIT);
                 // Send file given by the client
                 if (recvfrom(new_sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
                     handle_error("recvfrom failed");
 
-                printf("Received file name : %s\n", buffer);
+                printf("(%d) : Received file name : %s\n", getpid(),buffer);
 
                 //calculate the execution time
                 // to store the execution time of code
@@ -428,9 +428,9 @@ int main(int argc, char *argv[]) {
                 //calculate the throughput
                 int file_size = get_file_size(get_file(buffer));
                 double throughput = file_size / time_taken;
-                printf("File size %d\n", file_size);
-                printf("Time taken: %f\n", time_taken);
-                printf("Throughput: %E Byte/s\n", throughput);
+                printf("(%d) File size %d\n", getpid(),file_size);
+                printf("(%d) Time taken: %f\n", getpid(),time_taken);
+                printf("(%D) Throughput: %E Byte/s\n", getpid(),throughput);
 
                 //end the session
                 end_connection(sockfd, &client_addr, client_addr_len);
