@@ -411,6 +411,7 @@ int main(int argc, char *argv[]) {
             clock_gettime(CLOCK_MONOTONIC, &start);
         
             send_file(new_sockfd, &client_addr, client_addr_len, buffer);
+            close(new_sockfd);
         
             clock_gettime(CLOCK_MONOTONIC, &finish);
 
@@ -431,6 +432,6 @@ int main(int argc, char *argv[]) {
             //end the session
             end_connection(sockfd, &client_addr, client_addr_len);
     }
-
+    close(sockfd);
     return 0;
 }
