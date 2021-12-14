@@ -338,7 +338,7 @@ int end_connection(int sockfd, struct sockaddr_in *client_addr, socklen_t client
     sprintf(fin, "FIN");
     if (sendto(sockfd, fin, strlen(fin), 0, (struct sockaddr *)client_addr, client_addr_len) < 0)
         return -1;
-    //printf("Connection ended.\n");
+    printf("Connection ended.\n");
     return 0;
 }
 
@@ -378,7 +378,7 @@ int main(int argc, char *argv[]) {
 
     for(;;){
         // Wait for SYN
-    // printf("Waiting for client to send SYN...\n");
+        printf("Waiting for client to send SYN...\n");
         struct sockaddr_in client_addr;
         socklen_t client_addr_len = sizeof(client_addr);
         char buffer[BUFFER_LIMIT];
@@ -390,9 +390,9 @@ int main(int argc, char *argv[]) {
             int new_sockfd = 0; 
             fork();
             if(compareString(buffer, "SYN")){
-            //  printf("Received SYN from client.\n");
+                printf("Received SYN from client.\n");
                 new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
-            // printf("New socket: %d\n", new_sockfd);
+                printf("New socket: %d\n", new_sockfd);
             }
 
             // clear buffer
@@ -401,7 +401,7 @@ int main(int argc, char *argv[]) {
             if (recvfrom(new_sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
                 handle_error("recvfrom failed");
 
-        // printf("Received file name : %s\n", buffer);
+            printf("Received file name : %s\n", buffer);
 
             //calculate the execution time
             // to store the execution time of code
@@ -424,8 +424,8 @@ int main(int argc, char *argv[]) {
             //calculate the throughput
             int file_size = get_file_size(get_file(buffer));
             double throughput = file_size / time_taken;
-        // printf("File size %d\n", file_size);
-        // printf("Time taken: %f\n", time_taken);
+            printf("File size %d\n", file_size);
+            printf("Time taken: %f\n", time_taken);
             printf("Throughput: %E Byte/s\n", throughput);
 
             //end the session
