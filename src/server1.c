@@ -17,19 +17,19 @@ int create_udp_server(int port) {
         handle_error("socket creation failed");
     
     
-    printf("Socket created : %d\n", sockfd);
+  //  printf("Socket created : %d\n", sockfd);
 
     memset(&servaddr, 0, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = INADDR_ANY;
     servaddr.sin_port = htons(port);
 
-    printf("Binding to port %d\n", port);
+  //  printf("Binding to port %d\n", port);
     if (bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
         return -1;
         //handle_error("bind failed");
 
-    printf("Binding successful\n");
+   // printf("Binding successful\n");
 
     return sockfd;
 }
@@ -78,7 +78,7 @@ int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_add
     if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)client_addr, &client_addr_len) < 0)
         handle_error("recvfrom failed");
     if(compareString(buffer, "ACK")){
-        printf("Received ACK from client.\n");
+      //  printf("Received ACK from client.\n");
     }
     else{
         printf("Received something else.\n");
@@ -119,7 +119,7 @@ FILE* get_file(char* path){
 int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr_len, char *file_name) {
     FILE *file;
 
-    printf("I have to send the file\n");
+    //printf("I have to send the file\n");
     // variables for the select
     fd_set readset;
     struct timeval tv;
@@ -196,6 +196,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             packet_number = next_seq_to_send(acks, segments, timedout, flag_eof);
             //Here we add the previous packet number to the sent segments stack.
             segments = stack_push(segments, packet_number);
+            
+            printf("%d;%d", packet_number, %window_size);
 
             flag_eof = 0;
             // Clear the buffers
@@ -368,7 +370,7 @@ int main(int argc, char *argv[]) {
     else
         port = atoi(argv[1]);
     
-    printf("Server is running on port %d\n", port);
+  //  printf("Server is running on port %d\n", port);
     
     int sockfd = create_udp_server(port);
 
@@ -384,9 +386,9 @@ int main(int argc, char *argv[]) {
     printf("Received : %s\n", buffer);
     int new_sockfd = 0; 
     if(compareString(buffer, "SYN")){
-        printf("Received SYN from client.\n");
+      //  printf("Received SYN from client.\n");
         new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
-        printf("New socket: %d\n", new_sockfd);
+       // printf("New socket: %d\n", new_sockfd);
     }
 
     // clear buffer
@@ -395,7 +397,7 @@ int main(int argc, char *argv[]) {
     if (recvfrom(new_sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
         handle_error("recvfrom failed");
 
-    printf("Received file name : %s\n", buffer);
+   // printf("Received file name : %s\n", buffer);
 
     //calculate the execution time
     // to store the execution time of code
@@ -418,9 +420,9 @@ int main(int argc, char *argv[]) {
     //calculate the throughput
     int file_size = get_file_size(get_file(buffer));
     double throughput = file_size / time_taken;
-    printf("File size %d\n", file_size);
-    printf("Time taken: %f\n", time_taken);
-    printf("Throughput: %E Byte/s\n", throughput);
+   // printf("File size %d\n", file_size);
+   // printf("Time taken: %f\n", time_taken);
+   // printf("Throughput: %E Byte/s\n", throughput);
 
     //end the session
     end_connection(sockfd, &client_addr, client_addr_len);
