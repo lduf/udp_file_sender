@@ -15,7 +15,7 @@ server2.o : server2.c includes/server2.h
 	gcc $(options) -I /includes server2.c
 
 server3 : server3.o utils.o stack.o tcp_mechanism.o
-	gcc -O3 utils.o server1.o stack.o tcp_mechanism.o -o ../bin/server3-$(group) 
+	gcc -O3 utils.o server3.o stack.o tcp_mechanism.o -o ../bin/server3-$(group) 
 
 server3.o : server3.c includes/server3.h
 	gcc $(options) -I /includes server3.c
