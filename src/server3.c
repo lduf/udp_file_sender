@@ -376,59 +376,61 @@ int main(int argc, char *argv[]) {
     
     int sockfd = create_udp_server(port);
 
-    // Wait for SYN
-   // printf("Waiting for client to send SYN...\n");
-    struct sockaddr_in client_addr;
-    socklen_t client_addr_len = sizeof(client_addr);
-    char buffer[BUFFER_LIMIT];
-    memset(buffer, 0, BUFFER_LIMIT);
-    if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
-        handle_error("recvfrom failed");
+    for(;;){
+        // Wait for SYN
+    // printf("Waiting for client to send SYN...\n");
+        struct sockaddr_in client_addr;
+        socklen_t client_addr_len = sizeof(client_addr);
+        char buffer[BUFFER_LIMIT];
+        memset(buffer, 0, BUFFER_LIMIT);
+        if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
+            handle_error("recvfrom failed");
 
-   // printf("Received : %s\n", buffer);
-    int new_sockfd = 0; 
-    fork();
-    if(compareString(buffer, "SYN")){
-      //  printf("Received SYN from client.\n");
-        new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
-       // printf("New socket: %d\n", new_sockfd);
-    }
+    // printf("Received : %s\n", buffer);
+        int new_sockfd = 0; 
+        fork();
+        if(compareString(buffer, "SYN")){
+        //  printf("Received SYN from client.\n");
+            new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
+        // printf("New socket: %d\n", new_sockfd);
+        }
 
-    // clear buffer
-    memset(buffer, 0, BUFFER_LIMIT);
-    // Send file given by the client
-    if (recvfrom(new_sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
-        handle_error("recvfrom failed");
+        // clear buffer
+        memset(buffer, 0, BUFFER_LIMIT);
+        // Send file given by the client
+        if (recvfrom(new_sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
+            handle_error("recvfrom failed");
 
-   // printf("Received file name : %s\n", buffer);
+    // printf("Received file name : %s\n", buffer);
 
-    //calculate the execution time
-    // to store the execution time of code
-    struct timespec start, finish;
-    double time_taken;
+        //calculate the execution time
+        // to store the execution time of code
+        struct timespec start, finish;
+        double time_taken;
 
-    clock_gettime(CLOCK_MONOTONIC, &start);
- 
-    send_file(new_sockfd, &client_addr, client_addr_len, buffer);
- 
-    clock_gettime(CLOCK_MONOTONIC, &finish);
-
- // calculate elapsed time by finding difference (end - begin) and
-    // dividing the difference by CLOCKS_PER_SEC to convert to seconds
-    time_taken = (finish.tv_sec - start.tv_sec);
-    time_taken += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
- 
-   
+        clock_gettime(CLOCK_MONOTONIC, &start);
     
-    //calculate the throughput
-    int file_size = get_file_size(get_file(buffer));
-    double throughput = file_size / time_taken;
-   // printf("File size %d\n", file_size);
-   // printf("Time taken: %f\n", time_taken);
-    printf("Throughput: %E Byte/s\n", throughput);
+        send_file(new_sockfd, &client_addr, client_addr_len, buffer);
+    
+        clock_gettime(CLOCK_MONOTONIC, &finish);
 
-    //end the session
-    end_connection(sockfd, &client_addr, client_addr_len);
+    // calculate elapsed time by finding difference (end - begin) and
+        // dividing the difference by CLOCKS_PER_SEC to convert to seconds
+        time_taken = (finish.tv_sec - start.tv_sec);
+        time_taken += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+    
+    
+        
+        //calculate the throughput
+        int file_size = get_file_size(get_file(buffer));
+        double throughput = file_size / time_taken;
+    // printf("File size %d\n", file_size);
+    // printf("Time taken: %f\n", time_taken);
+        printf("Throughput: %E Byte/s\n", throughput);
+
+        //end the session
+        end_connection(sockfd, &client_addr, client_addr_len);
+    }
 
     return 0;
 }
