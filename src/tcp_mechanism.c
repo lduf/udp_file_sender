@@ -115,9 +115,6 @@ void fast_recovery() {
     if(FAST_RECOVERY_MOD == 1){
        cwnd = (fast_rt_window / 2 >= DEFAULT_CWND) ? fast_rt_window / 2 : DEFAULT_CWND;
     }
-    else{
-        cwnd = DEFAULT_CWND;
-    }
     //cwnd = ssthresh;
 }
 
