@@ -395,6 +395,9 @@ int main(int argc, char *argv[]) {
                     new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
                     printf("New socket: %d\n", new_sockfd);
                 }
+                else{
+                    continue;
+                }
                 //fork();
                 // clear buffer
                 if (fork() == 0){
