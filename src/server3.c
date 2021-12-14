@@ -16,20 +16,19 @@ int create_udp_server(int port) {
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
         handle_error("socket creation failed");
     
-    
-  //  printf("Socket created : %d\n", sockfd);
+    printf("Socket created : %d\n", sockfd);
 
     memset(&servaddr, 0, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = INADDR_ANY;
     servaddr.sin_port = htons(port);
 
-  //  printf("Binding to port %d\n", port);
+    printf("Binding to port %d\n", port);
     if (bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
         return -1;
         //handle_error("bind failed");
 
-   // printf("Binding successful\n");
+   printf("Binding successful\n");
 
     return sockfd;
 }
