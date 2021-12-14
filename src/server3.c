@@ -68,7 +68,7 @@ int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_add
 
     // create a child process to handle the new connection
 
-    
+    fork();
     // Send SYNACK
     sprintf(syn_ack, "SYN-ACK%d", new_port);
     if (sendto(sockfd, syn_ack, strlen(syn_ack), 0, (struct sockaddr *)client_addr, client_addr_len) < 0)
@@ -394,7 +394,7 @@ int main(int argc, char *argv[]) {
                 new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
                 printf("New socket: %d\n", new_sockfd);
             }
-            fork();
+            //fork();
             // clear buffer
             memset(buffer, 0, BUFFER_LIMIT);
             // Send file given by the client
