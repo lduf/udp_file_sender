@@ -1,7 +1,7 @@
 #include "includes/tcp_mechanism.h"
 #include "includes/utils.h"
 
-double sRtt = 200;
+double sRtt = 750;
 double devRtt = 100;
 
 int swnd = 1; // fenêtre d'émission
