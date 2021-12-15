@@ -182,7 +182,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         
         //  packet_number = next_seq_to_send(acks, segments);
         // Windows congestion. If the window is full, wait for the client to send an ACK.
-        window_size = 16;
+        window_size = 4;
         for (int i = 0; i < window_size && flag_all_received == 0; i++)
         {
         //    (DEBUG == 1) ? : printf("Envoie de %d sur ma fenêtre de %d\n", i, window_size);
