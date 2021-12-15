@@ -6,8 +6,8 @@
 #include "utils.h"
  
 #define MAX_DUPLICATE_ACK 3
-#define ALPHA 0.1
-#define BETA 0.05
+#define ALPHA 0.25
+#define BETA 0.1
 #define DEFAULT_CWND 1
 
 int next_seq_to_send(STACK acks, STACK segs, int timedout, int eof);
