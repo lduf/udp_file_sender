@@ -2,6 +2,7 @@
 
 int segment_size = DEFAULT_SEGMENT_SIZE - (BIT_OFFSET);
 int window_size = DEFAULT_WINDOW_SIZE; 
+int DEBUG = 0;
 
 /**
  * @brief This function is used to create the UDP server, and bind it to the specified port.
@@ -15,22 +16,18 @@ int create_udp_server(int port) {
 
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
         handle_error("socket creation failed");
-    
-    
-  //  printf("Socket created : %d\n", sockfd);
 
     memset(&servaddr, 0, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = INADDR_ANY;
     servaddr.sin_port = htons(port);
 
-  //  printf("Binding to port %d\n", port);
+  //  (DEBUG == 1) ? : printf("Binding to port %d\n", port);
     if (bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
         return -1;
         //handle_error("bind failed");
 
-   // printf("Binding successful\n");
-
+   // (DEBUG == 1) ? : printf("Binding successful\n");
     return sockfd;
 }
 
@@ -78,10 +75,10 @@ int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_add
     if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)client_addr, &client_addr_len) < 0)
         handle_error("recvfrom failed");
     if(compareString(buffer, "ACK")){
-      //  printf("Received ACK from client.\n");
+      //  (DEBUG == 1) ? : printf("Received ACK from client.\n");
     }
     else{
-        printf("Received something else.\n");
+        (DEBUG == 1) ? : printf("Received something else.\n");
         handle_error("Received something else after SYN-ACK");
     }
 
@@ -96,10 +93,10 @@ int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_add
  * @return The file.
  */
 FILE* get_file(char* path){
-   // printf("Recherche du fichier au chemin suivant : %s\n", path);
+   // (DEBUG == 1) ? : printf("Recherche du fichier au chemin suivant : %s\n", path);
     FILE* file = fopen(path, "r");
     if(file == NULL){
-        printf("File not found.\n");
+        (DEBUG == 1) ? : printf("File not found.\n");
         return NULL;
     }
     return file;
@@ -119,7 +116,7 @@ FILE* get_file(char* path){
 int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr_len, char *file_name) {
     FILE *file;
 
-    //printf("I have to send the file\n");
+    //(DEBUG == 1) ? : printf("I have to send the file\n");
     // variables for the select
     fd_set readset;
     struct timeval tv;
@@ -132,8 +129,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     tv.tv_usec = DEFAULT_TIMEOUT;
 
     int timedout = 0; // Flag to check if the select timed out.
-
-
 
     // Theses stacks are used to store data in order to implement some TCP mechanisms 
     STACK acks = stack_init(); // Lasts received ACKs
@@ -160,11 +155,10 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     // Send file
     int flag_eof = 0;
     int flag_all_received = 0;
-    int flag_duplicated_ack =0  ;
-    int next_window_size = DEFAULT_WINDOW_SIZE;
+    int flag_duplicated_ack =0;
 
     //clocks
-    clock_t begin =0;
+    clock_t begin = 0;
     clock_t end = 0;
     char buffer[DEFAULT_SEGMENT_SIZE];
     char segmented_file[segment_size];
@@ -172,7 +166,6 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
 
     do{
-   //     printf("\n*******\n");
          // Clear the buffers
         memset(buffer, 0, sizeof(buffer));
         memset(segmented_file, 0, sizeof(segmented_file));
@@ -185,19 +178,19 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         }
         // Creating the timeouts which will be used to calculate the RTT. The array size is the size of the window to be sent.
         
-    //    printf("Window size : %d\n", window_size);
+        // (DEBUG == 1) ? : printf("Window size : %d\n", window_size);
         
         //  packet_number = next_seq_to_send(acks, segments);
         // Windows congestion. If the window is full, wait for the client to send an ACK.
         for (int i = 0; i < window_size && flag_all_received == 0; i++)
         {
-        //    printf("Envoie de %d sur ma fenêtre de %d\n", i, window_size);
+        //    (DEBUG == 1) ? : printf("Envoie de %d sur ma fenêtre de %d\n", i, window_size);
             //Get the next packet number to send. If timeout, send the last packet again.
             packet_number = next_seq_to_send(acks, segments, timedout, flag_eof);
             //Here we add the previous packet number to the sent segments stack.
             segments = stack_push(segments, packet_number);
             
-           // printf("%d;%d\n", packet_number, window_size);
+           // (DEBUG == 1) ? : printf("%d;%d\n", packet_number, window_size);
 
             flag_eof = 0;
             // Clear the buffers
@@ -214,21 +207,19 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 // If the file is finished, we send the last segment with the flag EOF
                 flag_eof = 1;
                 last_segment_number = packet_number;
-          //      printf("File finished on packet n°%d.\n", last_segment_number);
+                // (DEBUG == 1) ? : printf("File finished on packet n°%d.\n", last_segment_number);
                 //handle_error("File finished");
             }
-            // 
-            // Concate the h eader and the file
 
             //print the buffer content and the size of the buffer
-            //printf("Buffer content : %s\n", buffer);
-            //printf("Buffer size : %d\n", strlen(buffer));
-            //printf("Segmented file content : %s\n", segmented_file);
-            //printf("Segmented file size : %d\n", strlen(segmented_file));
+            //(DEBUG == 1) ? : printf("Buffer content : %s\n", buffer);
+            //(DEBUG == 1) ? : printf("Buffer size : %d\n", strlen(buffer));
+            //(DEBUG == 1) ? : printf("Segmented file content : %s\n", segmented_file);
+            //(DEBUG == 1) ? : printf("Segmented file size : %d\n", strlen(segmented_file));
             //strcat(buffer, segmented_file);
             memcpy(&buffer[BIT_OFFSET], segmented_file, segment_size*sizeof(char));
-       //     printf("Sending segment %06d\n", packet_number);
-           // printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
+            //(DEBUG == 1) ? : printf("Sending segment %06d\n", packet_number);
+            //(DEBUG == 1) ? : printf("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
             // If we received an ACK for previous segment, we start the timer. Else the previous timer is still running.
             if(timedout == 0){
                 begin = clock();
@@ -236,23 +227,21 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
             // Send the segment
             
-     //       printf("Segment stack : \n");
-      //      stack_print(segments);
-            //printf("Sending buffer %s\n", buffer);
+            //(DEBUG == 1) ? : printf("Segment stack : \n");
+            // stack_print(segments);
+            //(DEBUG == 1) ? : printf("Sending buffer %s\n", buffer);
             if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
-                    printf("sendto failed.\n");
+                    (DEBUG == 1) ? : printf("sendto failed.\n");
                     handle_error("sendto failed");
                     return -1;
             }
             if(flag_eof == 1){
-               // printf("Sending EOF : BREAKKKKKKK   ING NEWS\n");
-               // flag_all_received = 1;
+               // (DEBUG == 1) ? : printf("Sending EOF : BREAKKKKKKK   ING NEWS\n");
                window_size = i + 1;
                 break;
             }
         }
-        //printf("Sending buffer %s\n", buffer);
-            //sleep(1);
+        //(DEBUG == 1) ? : printf("Sending buffer %s\n", buffer);
 
         //wait for ACK messages
         int loop_max = window_size;
@@ -261,10 +250,9 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         timedout = 0;
         for (int i = 0; i < loop_max && flag_all_received == 0 && flag_duplicated_ack == 0; i++) //
         {
-            //next_window_size = window_size;
             // Initialize the select
             FD_SET(sockfd, &readset);
-      //      printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
+            //      (DEBUG == 1) ? : printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
             tv.tv_sec = 0;
             tv.tv_usec = 1*estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
             //handle_error("select failed");
@@ -272,15 +260,13 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             memset(ack_buffer, 0, sizeof(ack_buffer));
             if (select(sockfd+1, &readset, NULL, NULL, &tv)== 0){
                 // If the select timed out, raise the timedout flag so the segment will be resend.
-          //      printf("TIMEOUT for packet %d !\n", packet_number);
+                //      (DEBUG == 1) ? : printf("TIMEOUT for packet %d !\n", packet_number);
                 timedout = 1;
-               // next_window_size = ((int) window_size/2 > DEFAULT_WINDOW_SIZE) ? (int) window_size/2 : DEFAULT_WINDOW_SIZE;
-               //break;
             }
             else{
-                //printf("Received ACK on packet %d\n", packet_number);
+                //(DEBUG == 1) ? : printf("Received ACK on packet %d\n", packet_number);
                 if(recvfrom(sockfd, ack_buffer, sizeof(ack_buffer), 0, (struct sockaddr *)client_addr, &client_addr_len) < 0){
-        //            printf("recvfrom failed.\n");
+                //            (DEBUG == 1) ? : printf("recvfrom failed.\n");
                 }
                 else{
                     end = clock(); // We stop the timer.
@@ -289,14 +275,13 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                             RTT = 1000000 * (end - begin) / CLOCKS_PER_SEC;
                         }
                         acked = atoi(extract(ack_buffer, "ACK([0-9]{6})", 1)); //get the ACK number
-                        //printf("ACK %d\n", acked);
+                        //(DEBUG == 1) ? : printf("ACK %d\n", acked);
                         acks = stack_push(acks, acked); // We push the ACK number to the stack.
                         acks->RTT= RTT; // RTT in microseconds
                         nb_positives_acks++;
-          //              printf("Acks stack\n");
-           //             stack_print(acks);
+                        //  (DEBUG == 1) ? : printf("Acks stack\n");
+                        //  stack_print(acks);
                         if(acks->duplicate > MAX_DUPLICATE_ACK){
-                          //  next_window_size = ((int) window_size/2 > DEFAULT_WINDOW_SIZE) ? (int) window_size/2 : DEFAULT_WINDOW_SIZE;//voir pour fast recovery : stocker la dernière valeur de fenetre et la reprendre/2
                             flag_duplicated_ack = 1;
                         }
                         else{
@@ -306,16 +291,13 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                     }
                 }
             }
-            
-            //window_size = next_window_size;
         }
-       // sleep(3);
         window_size = new_window_size(segments, acks, ((nb_positives_acks == loop_max) ? nb_positives_acks : 0), timedout); 
      
         
     }while(flag_eof == 0 || flag_all_received == 0); // We send the file until we reach the end of the file AND until we receive an ACK for the last sent packet.
-   // printf("File sent.\n");
-   // printf("Closing file.\n");
+   // (DEBUG == 1) ? : printf("File sent.\n");
+   // (DEBUG == 1) ? : printf("Closing file.\n");
 
     fclose(file);
 
@@ -336,7 +318,7 @@ int end_connection(int sockfd, struct sockaddr_in *client_addr, socklen_t client
     sprintf(fin, "FIN");
     if (sendto(sockfd, fin, strlen(fin), 0, (struct sockaddr *)client_addr, client_addr_len) < 0)
         return -1;
-    //printf("Connection ended.\n");
+    //(DEBUG == 1) ? : printf("Connection ended.\n");
     return 0;
 }
 
@@ -366,16 +348,16 @@ int main(int argc, char *argv[]) {
     int port = DEFAULT_PORT;
 
     if (argc != 2)
-        printf("Usage: ./serverXXX <port>\n default port %d used\n", DEFAULT_PORT);
+        (DEBUG == 1) ? : printf("Usage: ./serverXXX <port>\n default port %d used\n", DEFAULT_PORT);
     else
         port = atoi(argv[1]);
     
-  //  printf("Server is running on port %d\n", port);
+  //  (DEBUG == 1) ? : printf("Server is running on port %d\n", port);
     
     int sockfd = create_udp_server(port);
 
     // Wait for SYN
-   // printf("Waiting for client to send SYN...\n");
+   // (DEBUG == 1) ? : printf("Waiting for client to send SYN...\n");
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
     char buffer[BUFFER_LIMIT];
@@ -383,12 +365,12 @@ int main(int argc, char *argv[]) {
     if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
         handle_error("recvfrom failed");
 
-   // printf("Received : %s\n", buffer);
+    // (DEBUG == 1) ? : printf("Received : %s\n", buffer);
     int new_sockfd = 0; 
     if(compareString(buffer, "SYN")){
-      //  printf("Received SYN from client.\n");
+        //  (DEBUG == 1) ? : printf("Received SYN from client.\n");
         new_sockfd = handle_syn(sockfd, &client_addr, client_addr_len);
-       // printf("New socket: %d\n", new_sockfd);
+        // (DEBUG == 1) ? : printf("New socket: %d\n", new_sockfd);
     }
 
     // clear buffer
@@ -397,7 +379,7 @@ int main(int argc, char *argv[]) {
     if (recvfrom(new_sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)&client_addr, &client_addr_len) < 0)
         handle_error("recvfrom failed");
 
-   // printf("Received file name : %s\n", buffer);
+    // (DEBUG == 1) ? : printf("Received file name : %s\n", buffer);
 
     //calculate the execution time
     // to store the execution time of code
@@ -410,7 +392,7 @@ int main(int argc, char *argv[]) {
  
     clock_gettime(CLOCK_MONOTONIC, &finish);
 
- // calculate elapsed time by finding difference (end - begin) and
+    // calculate elapsed time by finding difference (end - begin) and
     // dividing the difference by CLOCKS_PER_SEC to convert to seconds
     time_taken = (finish.tv_sec - start.tv_sec);
     time_taken += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
@@ -420,9 +402,9 @@ int main(int argc, char *argv[]) {
     //calculate the throughput
     int file_size = get_file_size(get_file(buffer));
     double throughput = file_size / time_taken;
-   // printf("File size %d\n", file_size);
-   // printf("Time taken: %f\n", time_taken);
-    printf("Throughput: %E Byte/s\n", throughput);
+    // (DEBUG == 1) ? : printf("File size %d\n", file_size);
+    // (DEBUG == 1) ? : printf("Time taken: %f\n", time_taken);
+    (DEBUG == 1) ? : printf("Throughput: %E Byte/s\n", throughput);
 
     //end the session
     end_connection(sockfd, &client_addr, client_addr_len);

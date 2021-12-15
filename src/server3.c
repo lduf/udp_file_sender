@@ -3,6 +3,7 @@
 int segment_size = DEFAULT_SEGMENT_SIZE - (BIT_OFFSET);
 int window_size = DEFAULT_WINDOW_SIZE; 
 int DEBUG = 0;
+
 /**
  * @brief This function is used to create the UDP server, and bind it to the specified port.
  * @param port The port number to bind the server to.
@@ -76,7 +77,7 @@ int handle_syn(int sockfd, struct sockaddr_in *client_addr, socklen_t client_add
     if (recvfrom(sockfd, buffer, BUFFER_LIMIT, 0, (struct sockaddr *)client_addr, &client_addr_len) < 0)
         handle_error("recvfrom failed");
     if(compareString(buffer, "ACK")){
-      //  (DEBUG == 0) ? : printf ("Received ACK from client.\n");
+    //  (DEBUG == 0) ? : printf ("Received ACK from client.\n");
     }
     else{
         (DEBUG == 0) ? : printf ("Received something else : %s\n", buffer);
@@ -158,8 +159,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
     // Send file
     int flag_eof = 0;
     int flag_all_received = 0;
-    int flag_duplicated_ack =0  ;
-    int next_window_size = DEFAULT_WINDOW_SIZE;
+    int flag_duplicated_ack =0 ;
 
     //clocks
     clock_t begin =0;
@@ -170,7 +170,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
 
 
     do{
-   //     (DEBUG == 0) ? : printf ("\n*******\n");
+
          // Clear the buffers
         memset(buffer, 0, sizeof(buffer));
         memset(segmented_file, 0, sizeof(segmented_file));
@@ -183,13 +183,11 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         }
         // Creating the timeouts which will be used to calculate the RTT. The array size is the size of the window to be sent.
         
-    //    (DEBUG == 0) ? : printf ("Window size : %d\n", window_size);
         
-        //  packet_number = next_seq_to_send(acks, segments);
         // Windows congestion. If the window is full, wait for the client to send an ACK.
         for (int i = 0; i < window_size && flag_all_received == 0; i++)
         {
-        //    (DEBUG == 0) ? : printf ("Envoie de %d sur ma fenêtre de %d\n", i, window_size);
+            (DEBUG == 0) ? : printf ("Envoie de %d sur ma fenêtre de %d\n", i, window_size);
             //Get the next packet number to send. If timeout, send the last packet again.
             packet_number = next_seq_to_send(acks, segments, timedout, flag_eof);
             //Here we add the previous packet number to the sent segments stack.
@@ -212,45 +210,29 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                 // If the file is finished, we send the last segment with the flag EOF
                 flag_eof = 1;
                 last_segment_number = packet_number;
-          //      (DEBUG == 0) ? : printf ("File finished on packet n°%d.\n", last_segment_number);
+                (DEBUG == 0) ? : printf ("File finished on packet n°%d.\n", last_segment_number);
                 //handle_error("File finished");
             }
-            // 
-            // Concate the h eader and the file
-
-            //print the buffer content and the size of the buffer
-            //(DEBUG == 0) ? : printf ("Buffer content : %s\n", buffer);
-            //(DEBUG == 0) ? : printf ("Buffer size : %d\n", strlen(buffer));
-            //(DEBUG == 0) ? : printf ("Segmented file content : %s\n", segmented_file);
-            //(DEBUG == 0) ? : printf ("Segmented file size : %d\n", strlen(segmented_file));
-            //strcat(buffer, segmented_file);
             memcpy(&buffer[BIT_OFFSET], segmented_file, segment_size*sizeof(char));
-       //     (DEBUG == 0) ? : printf ("Sending segment %06d\n", packet_number);
-           // (DEBUG == 0) ? : printf ("||| ------------ |||\n%s\n||| ------------ |||\n", buffer);
-            // If we received an ACK for previous segment, we start the timer. Else the previous timer is still running.
             if(timedout == 0){
                 begin = clock();
             }
 
             // Send the segment
             
-     //       (DEBUG == 0) ? : printf ("Segment stack : \n");
-      //      stack_print(segments);
-            //(DEBUG == 0) ? : printf ("Sending buffer %s\n", buffer);
+            (DEBUG == 0) ? : printf ("Segment stack : \n");
+            (DEBUG == 0) ? : stack_print(segments);
             if(sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)client_addr, client_addr_len) < 0){
                     (DEBUG == 0) ? : printf ("sendto failed.\n");
                     handle_error("sendto failed");
                     return -1;
             }
             if(flag_eof == 1){
-               // (DEBUG == 0) ? : printf ("Sending EOF : BREAKKKKKKK   ING NEWS\n");
-               // flag_all_received = 1;
+               (DEBUG == 0) ? : printf ("Sending EOF : BREAKKKKKKK   ING NEWS\n");
                window_size = i + 1;
                 break;
             }
         }
-        //(DEBUG == 0) ? : printf ("Sending buffer %s\n", buffer);
-            //sleep(1);
 
         //wait for ACK messages
         int loop_max = window_size;
@@ -259,10 +241,9 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         timedout = 0;
         for (int i = 0; i < loop_max && flag_all_received == 0 && flag_duplicated_ack == 0; i++) //
         {
-            //next_window_size = window_size;
             // Initialize the select
             FD_SET(sockfd, &readset);
-      //      (DEBUG == 0) ? : printf ("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
+            (DEBUG == 0) ? : printf ("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
             tv.tv_sec = 0;
             tv.tv_usec = 1*estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
             //handle_error("select failed");
@@ -278,7 +259,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             else{
                 //(DEBUG == 0) ? : printf ("Received ACK on packet %d\n", packet_number);
                 if(recvfrom(sockfd, ack_buffer, sizeof(ack_buffer), 0, (struct sockaddr *)client_addr, &client_addr_len) < 0){
-        //            (DEBUG == 0) ? : printf ("recvfrom failed.\n");
+                //(DEBUG == 0) ? : printf ("recvfrom failed.\n");
                 }
                 else{
                     end = clock(); // We stop the timer.
@@ -291,8 +272,8 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                         acks = stack_push(acks, acked); // We push the ACK number to the stack.
                         acks->RTT= RTT; // RTT in microseconds
                         nb_positives_acks++;
-          //              (DEBUG == 0) ? : printf ("Acks stack\n");
-           //             stack_print(acks);
+                        //(DEBUG == 0) ? : printf ("Acks stack\n");
+                        //stack_print(acks);
                         if(acks->duplicate > MAX_DUPLICATE_ACK){
                           //  next_window_size = ((int) window_size/2 > DEFAULT_WINDOW_SIZE) ? (int) window_size/2 : DEFAULT_WINDOW_SIZE;//voir pour fast recovery : stocker la dernière valeur de fenetre et la reprendre/2
                             flag_duplicated_ack = 1;
@@ -304,10 +285,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
                     }
                 }
             }
-            
-            //window_size = next_window_size;
         }
-       // sleep(3);
         window_size = new_window_size(segments, acks, ((nb_positives_acks == loop_max) ? nb_positives_acks : 0), timedout); 
      
         
@@ -368,7 +346,7 @@ int main(int argc, char *argv[]) {
     else
         port = atoi(argv[1]);
     
-  //  (DEBUG == 0) ? : printf ("Server is running on port %d\n", port);
+    //  (DEBUG == 0) ? : printf ("Server is running on port %d\n", port);
     
     int sockfd = create_udp_server(port);
 
@@ -415,7 +393,7 @@ int main(int argc, char *argv[]) {
             
                 clock_gettime(CLOCK_MONOTONIC, &finish);
 
-            // calculate elapsed time by finding difference (end - begin) and
+                // calculate elapsed time by finding difference (end - begin) and
                 // dividing the difference by CLOCKS_PER_SEC to convert to seconds
                 time_taken = (finish.tv_sec - start.tv_sec);
                 time_taken += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
