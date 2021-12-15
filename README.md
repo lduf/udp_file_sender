@@ -4,5 +4,5 @@ Pour lancer le projet :
 
 ```
     src/make
-    cd .. 
+    bin/serverX-DetecteurML
 ```
