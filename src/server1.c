@@ -182,7 +182,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
         
         //  packet_number = next_seq_to_send(acks, segments);
         // Windows congestion. If the window is full, wait for the client to send an ACK.
-        //window_size = 4;
+        window_size = 60;
         for (int i = 0; i < window_size && flag_all_received == 0; i++)
         {
         //    (DEBUG == 1) ? : printf("Envoie de %d sur ma fenêtre de %d\n", i, window_size);
@@ -255,7 +255,7 @@ int send_file(int sockfd, struct sockaddr_in *client_addr, socklen_t client_addr
             FD_SET(sockfd, &readset);
             //      (DEBUG == 1) ? : printf("estimated timeout : %d us\n",estimate_timeout(acks->RTT));
             tv.tv_sec = 0;
-            tv.tv_usec = 1*estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
+            tv.tv_usec = 3000;//1*estimate_timeout(acks->RTT); //DEFAULT_TIMEOUT; //estimate_timeout(acks->RTT); // Set the timeout based on the last received RTT.
             //handle_error("select failed");
             char ack_buffer[16];
             memset(ack_buffer, 0, sizeof(ack_buffer));
