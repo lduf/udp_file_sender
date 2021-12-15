@@ -6,7 +6,7 @@
 #include "utils.h"
  
 #define MAX_DUPLICATE_ACK 3
-#define ALPHA 0.01
+#define ALPHA 0.1
 #define BETA 0.05
 #define DEFAULT_CWND 1
 
